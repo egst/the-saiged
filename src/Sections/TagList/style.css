@@ -1,0 +1,39 @@
+.tag-list {
+    padding: clamp(64px, 8vw, 128px) clamp(22px, 4vw, 68px);
+    background: #f8f8f8;
+}
+
+.tag-list-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tag-list-heading {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 64px);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    margin: 0 0 24px;
+}
+
+.tag-list-body {
+    font-size: clamp(16px, 1.5vw, 21px);
+    line-height: 1.6;
+    color: #252525;
+    margin: 0 0 48px;
+    max-width: 860px;
+}
+
+.tag-list-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.tag-list-tag {
+    padding: 12px 24px;
+    background: #fff;
+    border: 1px solid rgba(17, 17, 17, 0.12);
+    font-size: 14px;
+    font-weight: 500;
+}

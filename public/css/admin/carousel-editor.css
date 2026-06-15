@@ -1,0 +1,368 @@
+/*
+ * Image carousel section editor — horizontal list of square cards (one
+ * per slide) above the "+ Add image" button. The horizontal layout
+ * roughly matches the rendered carousel so the editor reads as a
+ * preview of the result.
+ *
+ * Items overflow horizontally with native scroll rather than wrapping
+ * — wrap-style would suggest a grid, which the carousel isn't.
+ */
+.carousel-items {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-medium);
+    overflow-x: auto;
+    padding-bottom: var(--space-small); /* room for the scrollbar */
+}
+
+.carousel-items--vertical {
+    flex-direction: column;
+    overflow-x: visible;
+}
+
+.carousel-items--vertical .carousel-item,
+.carousel-items--vertical .carousel-add {
+    flex: none;
+    min-height: 0;
+}
+
+.carousel-item {
+    flex: 0 0 12rem;
+    min-height: 15rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    padding: var(--space-medium);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+}
+
+.carousel-item-preview {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.carousel-item-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: filter 200ms ease;
+}
+
+.carousel-item-preview:hover {
+    outline: 1px dashed var(--accent);
+}
+
+.carousel-item-preview:hover img {
+    filter: blur(6px);
+}
+
+.carousel-item-preview::after {
+    content: 'Change image';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+.carousel-item-preview:hover::after {
+    opacity: 1;
+}
+
+.carousel-item-controls {
+    display: flex;
+    gap: var(--space-small);
+    align-items: center;
+}
+
+.carousel-item-move,
+.carousel-item-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.carousel-item-move:hover:not(:disabled),
+.carousel-item-remove:hover {
+    color: var(--text);
+    border-color: var(--accent);
+}
+
+.carousel-item-move:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.carousel-item-remove {
+    margin-left: auto;
+}
+
+.carousel-item-remove:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+}
+
+/*
+ * Sized and placed like a .carousel-item so it reads as the next empty
+ * slot in the strip: same fixed width and min-height as the cards so the
+ * button is always the same size — empty state or otherwise.
+ */
+.carousel-add {
+    flex: 0 0 12rem;
+    min-height: 15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-medium);
+    background: transparent;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    text-align: center;
+}
+
+.carousel-add:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* Link-carousel cards are wider and taller — they hold four text inputs
+ * plus a preview, so both cards and the add button use a larger size. */
+.link-carousel-item {
+    flex: 0 0 22rem;
+    min-height: 34rem;
+}
+
+.link-carousel-add {
+    flex: 0 0 22rem;
+    min-height: 34rem;
+}
+
+/* Project-grid cards hold an image, type, heading, and body — wider and
+ * slightly taller than link-carousel. Add button matches card dimensions. */
+.project-grid-item {
+    flex: 0 0 26rem;
+}
+
+.project-grid-add {
+    flex: 0 0 26rem;
+    min-height: 35rem;
+}
+
+/* Artist-grid cards hold an image, name, and birth year. */
+.artist-grid-item,
+.artist-grid-add {
+    flex: 0 0 16rem;
+    min-height: 21rem;
+}
+
+/*
+ * Spinner overlay shown inside an image preview while the thumbnail loads.
+ * Appended as a child element; removed once img fires load/error.
+ */
+.img-spinner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.img-spinner::after {
+    content: '';
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(255, 255, 255, 0.25);
+    border-top-color: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+}
+
+/*
+ * Single-image picker used by sections like ImageBreak — shows a full-
+ * width "add image" button before any image is picked, then the image
+ * itself as a clickable area with a "change image" hover overlay.
+ */
+.image-break-add {
+    flex: none;
+    width: 100%;
+    max-width: 24rem;
+    aspect-ratio: 16 / 9;
+    padding: 0;
+    min-height: 0;
+}
+
+.image-break-picked {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 24rem;
+    aspect-ratio: 16 / 9;
+}
+
+.image-break-picked img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: filter 200ms ease;
+}
+
+.image-break-picked:hover {
+    outline: 1px dashed var(--accent);
+}
+
+.image-break-picked:hover img {
+    filter: blur(6px);
+}
+
+.image-break-picked::after {
+    content: 'Change image';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+.image-break-picked:hover::after {
+    opacity: 1;
+}
+
+/*
+ * Upload picker — modal opened from the carousel editor (and later
+ * from any section needing to pick an existing upload). Overlay
+ * darkens the page; modal sits centered with a thumbnail grid inside.
+ */
+.upload-picker-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-large);
+}
+
+.upload-picker {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: min(64rem, 100%);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.upload-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-medium) var(--space-large);
+    border-bottom: 1px solid var(--border);
+}
+
+.upload-picker-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.upload-picker-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.upload-picker-close:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.upload-picker-grid {
+    padding: var(--space-large);
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+    gap: var(--space-medium);
+}
+
+.upload-picker-tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    padding: var(--space-small);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--text);
+    text-align: left;
+}
+
+.upload-picker-tile:hover {
+    border-color: var(--accent);
+}
+
+.upload-picker-tile img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+}
+
+.upload-picker-tile-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

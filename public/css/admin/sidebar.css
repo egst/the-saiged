@@ -1,0 +1,88 @@
+/*
+ * Left sidebar — the new-page CTA, the page tree, and load-error fallback.
+ * The tree itself lives in page-tree.css; this file is just the outer
+ * sidebar chrome.
+ *
+ * #sidebar-overlay is the mobile click-outside-to-close backdrop; it's
+ * `display: none` here and switched on in responsive.css when the
+ * sidebar becomes a drawer.
+ */
+#sidebar {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: var(--space-small);
+}
+
+#sidebar-overlay {
+    display: none;
+}
+
+.new-page {
+    display: block;
+    padding: var(--space-small) var(--space-medium);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    color: var(--muted);
+    text-decoration: none;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+.new-page:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/*
+ * Static admin links (Uploads, future header/footer/menu config). Look
+ * like page-tree leaves — same padding, hover, active states — but
+ * without the indicator dot, since they're not Pages.
+ */
+.sidebar-static {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+}
+
+.sidebar-static-link {
+    display: block;
+    padding: var(--space-small) var(--space-medium);
+    border-radius: 4px;
+    color: var(--text);
+    text-decoration: none;
+    line-height: 1.3;
+    cursor: pointer;
+    user-select: none;
+}
+
+.sidebar-static-link:hover {
+    background: var(--bg);
+}
+
+.sidebar-static-link.active {
+    background: var(--accent);
+    color: white;
+}
+
+.sidebar-divider {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 0;
+}
+
+#pages {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-error {
+    margin: 0;
+    padding: var(--space-small) var(--space-medium);
+    color: var(--danger);
+    font-size: 0.85rem;
+}

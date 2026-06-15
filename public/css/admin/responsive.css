@@ -1,0 +1,69 @@
+/*
+ * Mobile breakpoint — kept in one file rather than scattered across
+ * component files so the mobile design reads as a coherent whole. Below
+ * 768px the sidebar becomes an off-canvas drawer; the hamburger button
+ * (hidden by default) becomes the trigger.
+ */
+@media (max-width: 767px) {
+    :root {
+        --sidebar-w: min(80vw, 16rem);
+    }
+
+    body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "topbar"
+            "content";
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    #sidebar {
+        position: fixed;
+        top: var(--topbar-h);
+        left: 0;
+        bottom: 0;
+        width: var(--sidebar-w);
+        transform: translateX(-100%);
+        transition: transform 0.2s ease;
+        z-index: 100;
+        border-right: 1px solid var(--border);
+    }
+
+    body[data-sidebar-open] #sidebar {
+        transform: translateX(0);
+    }
+
+    #sidebar-overlay {
+        display: block;
+        position: fixed;
+        top: var(--topbar-h);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 99;
+    }
+
+    body[data-sidebar-open] #sidebar-overlay {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    #content {
+        padding: 1rem;
+    }
+
+    .page-meta {
+        word-break: break-all;
+    }
+
+    .page-actions {
+        flex-wrap: wrap;
+    }
+}

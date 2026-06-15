@@ -1,0 +1,132 @@
+/*
+ * LinkCarousel section — full-viewport hero with auto-advancing slides.
+ * Slides are absolute-positioned overlays; the content area (eyebrow,
+ * title, button) is shared across slides and updated by link-carousel.js.
+ * Progress bars at the bottom animate over SLIDE_INTERVAL_MS (4 s).
+ * Mirrors .hero-card from the client design. Tokens from main.css.
+ */
+.link-carousel {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+    background: var(--black);
+    isolation: isolate;
+}
+
+.link-carousel-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.025);
+    transition: opacity 1100ms ease, transform 2200ms ease;
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
+}
+
+.link-carousel-slide.is-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.link-carousel-content {
+    position: absolute;
+    left: clamp(32px, 11.5vw, 190px);
+    top: 42%;
+    transform: translateY(-50%);
+    width: min(760px, 70vw);
+    z-index: 10;
+    color: var(--white);
+}
+
+.link-carousel-eyebrow {
+    font-family: var(--sans);
+    font-size: clamp(15px, 1.2vw, 22px);
+    font-weight: 700;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+    text-shadow: 0 1px 22px rgba(0, 0, 0, 0.24);
+}
+
+.link-carousel-title {
+    font-family: var(--serif);
+    font-size: clamp(42px, 4vw, 78px);
+    font-weight: 400;
+    letter-spacing: -0.075em;
+    line-height: 0.96;
+    max-width: 860px;
+    margin: 0 0 24px;
+    text-shadow: 0 1px 28px rgba(0, 0, 0, 0.18);
+}
+
+.link-carousel-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--taupe);
+    font-family: var(--sans);
+    font-size: clamp(15px, 1vw, 18px);
+    font-weight: 700;
+    line-height: 1;
+    padding: 10px 14px 11px;
+    text-decoration: none;
+    transition: background 300ms ease, transform 300ms ease;
+}
+
+.link-carousel-button:hover {
+    background: var(--cream);
+    transform: translateY(-2px);
+}
+
+.link-carousel-progress {
+    position: absolute;
+    left: clamp(32px, 7vw, 96px);
+    right: clamp(32px, 7vw, 96px);
+    bottom: 44px;
+    z-index: 10;
+    display: flex;
+    gap: 22px;
+}
+
+.link-carousel-progress-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.58);
+    overflow: hidden;
+    position: relative;
+}
+
+.link-carousel-progress-line span {
+    position: absolute;
+    inset: 0;
+    transform: scaleX(0);
+    transform-origin: left center;
+    background: var(--white);
+}
+
+.link-carousel-progress-line.is-active span {
+    animation: link-carousel-fill 4s linear forwards;
+}
+
+@keyframes link-carousel-fill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+@media (max-width: 860px) {
+    .link-carousel-content {
+        left: 24px;
+        right: 24px;
+        width: auto;
+        top: 45%;
+    }
+
+    .link-carousel-progress {
+        left: 24px;
+        right: 24px;
+        bottom: 34px;
+        gap: 12px;
+    }
+}

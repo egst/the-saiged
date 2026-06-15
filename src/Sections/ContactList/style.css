@@ -1,0 +1,71 @@
+.contact-list {
+    padding: clamp(120px, 15vw, 200px) clamp(32px, 6vw, 68px);
+    background: #fafafa;
+}
+
+.contact-list-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.contact-list-title {
+    font-family: var(--serif);
+    font-size: clamp(56px, 8vw, 120px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0 0 clamp(80px, 12vw, 160px);
+}
+
+.contact-list-item {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: clamp(32px, 6vw, 80px);
+    padding-bottom: clamp(60px, 10vw, 100px);
+    border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+}
+
+.contact-list-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.contact-list-item + .contact-list-item {
+    padding-top: clamp(60px, 10vw, 100px);
+}
+
+.contact-list-heading {
+    font-family: var(--sans);
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.contact-list-body {
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.contact-list-body a {
+    font-style: italic;
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.2);
+}
+
+.contact-list-note {
+    font-size: clamp(16px, 1.5vw, 19px);
+    line-height: 1.6;
+    color: #666;
+    margin: 24px 0 0;
+}
+
+@media (max-width: 860px) {
+    .contact-list-item {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}

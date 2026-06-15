@@ -1,0 +1,61 @@
+/*
+ * Root variables, document-level resets, and the top-level page grid.
+ * Imported first; every other component file relies on these vars.
+ */
+:root {
+    /*
+     * Hardcoded dark theme for now. To make this switchable later, add either:
+     *   @media (prefers-color-scheme: light) { :root { ... light overrides ... } }
+     * or a manual toggle via [data-theme=light] selectors that JS can set.
+     */
+    --bg:           #1a1a1a;
+    --surface:      #242424;
+    --border:       #3a3a3a;
+    --text:         #e8e8e8;
+    --muted:        #888888;
+    --accent:       #3b82f6;
+    --accent-hover: #2563eb;
+    --danger:       #f87171;
+    --topbar-h:     3rem;
+    --sidebar-w:    18rem;
+
+    /*
+     * Spacing scale — used consistently across topbar, sidebar, and content.
+     * Pattern: small (tight vertical / button v-pad / between siblings),
+     *          medium (horizontal button pad / indicator gaps / panel pad),
+     *          large (outer content padding / breathing room around blocks).
+     */
+    --space-small:  0.5rem;
+    --space-medium: 1rem;
+    --space-large:  1.5rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
+
+body {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) 1fr;
+    grid-template-rows: var(--topbar-h) 1fr;
+    grid-template-areas:
+        "topbar  topbar"
+        "sidebar content";
+}

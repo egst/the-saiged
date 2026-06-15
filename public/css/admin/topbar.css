@@ -1,0 +1,59 @@
+/*
+ * Top bar — brand link on the left, hamburger (mobile only), loader on
+ * the right. The loader's animation lives here too because the
+ * .loader element is conceptually a topbar widget, even though Loader
+ * is also used in transient places (e.g., sidebar/content swaps).
+ */
+#topbar {
+    grid-area: topbar;
+    display: flex;
+    align-items: center;
+    gap: var(--space-small);
+    padding: 0 var(--space-medium);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+#topbar .loader {
+    margin-left: auto;
+}
+
+#brand {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+}
+
+#brand:hover {
+    color: var(--accent);
+}
+
+.hamburger {
+    display: none;
+    background: transparent;
+    border: 0;
+    color: var(--text);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: var(--space-small);
+}
+
+.hamburger:hover {
+    color: var(--accent);
+}
+
+.loader {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+}
+
+.loader[data-active] {
+    border: 2px solid var(--border);
+    border-top-color: var(--muted);
+    border-radius: 50%;
+    animation: spin 0.65s linear infinite;
+}

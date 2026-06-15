@@ -1,0 +1,75 @@
+.split-banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: clamp(400px, 60vh, 750px);
+}
+
+.split-banner-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(12px, 1.5vw, 20px);
+    padding: clamp(40px, 6vw, 100px) clamp(22px, 5vw, 80px);
+    background: var(--bg, #fafafa);
+}
+
+.split-banner-label {
+    font-family: var(--sans);
+    font-size: clamp(12px, 1.2vw, 15px);
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted, #888);
+}
+
+.split-banner-heading {
+    font-family: var(--serif);
+    font-size: clamp(32px, 4vw, 64px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.split-banner-date {
+    font-family: var(--sans);
+    font-size: clamp(14px, 1.3vw, 17px);
+    color: var(--muted, #888);
+}
+
+.split-banner-button {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 14px 32px;
+    background: var(--fg, #111);
+    color: var(--bg, #fafafa);
+    font-family: var(--sans);
+    font-size: clamp(13px, 1.2vw, 15px);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+}
+
+.split-banner-button:hover {
+    opacity: 0.8;
+}
+
+.split-banner-media {
+    overflow: hidden;
+}
+
+.split-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 860px) {
+    .split-banner {
+        grid-template-columns: 1fr;
+    }
+
+    .split-banner-media {
+        aspect-ratio: 4 / 3;
+    }
+}

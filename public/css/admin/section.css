@@ -1,0 +1,159 @@
+/*
+ * Section editor — each section is a card with [drag handle | type label
+ * | remove] header, then inputs below. Large internal padding and large
+ * gaps between sections; small gaps between input labels and their fields
+ * (the latter handled by content.css's label flex column).
+ */
+
+/* List of sections — gap-large between cards (no per-card margin). */
+.sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-large);
+}
+
+/*
+ * When there are no sections yet, drop the container from the layout
+ * entirely — otherwise the outer page-editor's gap-large applies on both
+ * sides of an empty box and looks like a doubled gap.
+ */
+.sections:empty {
+    display: none;
+}
+
+.section-edit {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-large);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: var(--space-large);
+    background: var(--surface);
+}
+
+.section-edit.dragging {
+    opacity: 0.4;
+    background: var(--bg);
+    border-style: dashed;
+}
+
+.section-edit-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-small);
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.section-type {
+    flex: 1;
+    text-transform: capitalize;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: 0.02em;
+}
+
+/*
+ * Drag handle — bigger clickable box with the icon centered. The icon
+ * itself is small but the surrounding box is the actual grab target so
+ * the user doesn't have to hit a tiny glyph precisely.
+ */
+.section-handle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
+    cursor: grab;
+    user-select: none;
+    color: var(--muted);
+    letter-spacing: -2px;
+}
+
+.section-handle:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.section-handle:active {
+    cursor: grabbing;
+}
+
+.section-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.section-remove:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.section-move {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.section-move:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.section-edit:first-child .section-move-up,
+.section-edit:last-child .section-move-down {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/*
+ * The section's own element (rendered by each Section subclass — a div
+ * containing label/input pairs as direct children) becomes a flex column
+ * so labels stack with large gaps between fields. .section-body is its
+ * outer wrapper; targeting its child gets us to whatever the section
+ * renders without coupling to the inner tag name.
+ */
+.section-edit > .section-body > * {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-large);
+}
+
+/* "+ Add section" trigger button — opens the section-picker modal. */
+.add-section {
+    display: block;
+    width: 100%;
+    padding: var(--space-medium);
+    background: transparent;
+    color: var(--muted);
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    text-align: center;
+}
+
+.add-section:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}

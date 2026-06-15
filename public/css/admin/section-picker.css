@@ -1,0 +1,308 @@
+/* ─── Section picker modal ─────────────────────────────────────────────────── */
+
+.sp-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-large);
+}
+
+.sp-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    width: min(56rem, 100%);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-medium) var(--space-large);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.sp-header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.sp-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 4px;
+    font: inherit;
+}
+
+.sp-close:hover {
+    background: var(--bg);
+    color: var(--text);
+}
+
+.sp-grid {
+    padding: var(--space-large);
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: var(--space-medium);
+}
+
+.sp-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    padding: var(--space-small);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font: inherit;
+    color: var(--text);
+    text-align: left;
+}
+
+.sp-card:hover,
+.sp-card:focus-visible {
+    border-color: var(--accent);
+    background: var(--bg);
+    outline: none;
+}
+
+/* ─── Preview container ─────────────────────────────────────────────────────── */
+
+.sp-preview {
+    position: relative;
+    background: var(--bg);
+    border-radius: 3px;
+    padding: 10px 12px;
+    height: 80px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+}
+
+.sp-preview--dark {
+    background: #1a1a1a;
+    justify-content: flex-end;
+    padding-bottom: 13px;
+}
+
+.sp-preview--light {
+    background: #f0f0f0;
+}
+
+.sp-preview--light .sp-bar          { background: rgba(0, 0, 0, 0.30); }
+.sp-preview--light .sp-bar--heading { background: rgba(0, 0, 0, 0.65); height: 5px; }
+.sp-preview--light .sp-bar--eyebrow { background: rgba(0, 0, 0, 0.38); height: 2px; margin-bottom: 0; }
+.sp-preview--light .sp-bar--btn     { background: rgba(0, 0, 0, 0.55); }
+.sp-preview--light .sp-card-mini    { border-color: rgba(0, 0, 0, 0.25); }
+
+/*
+ * Abstract photo-like background for sections that have a background image.
+ * Pink-toned radial gradient blobs on a deep background — enough visual cue
+ * without needing an actual placeholder image.
+ */
+.sp-preview--img {
+    background:
+        radial-gradient(ellipse 60% 75% at 22% 65%, #3a2a6e 0%, transparent 68%),
+        radial-gradient(ellipse 55% 60% at 75% 28%, #2a1f5c 0%, transparent 68%),
+        radial-gradient(ellipse 70% 50% at 52% 90%, #1e2d7a 0%, transparent 68%),
+        #2a001c;
+}
+
+.sp-preview--center {
+    justify-content: center;
+    align-items: center;
+}
+
+.sp-label {
+    font-size: 0.8rem;
+    color: var(--muted);
+    padding: 0 4px 2px;
+}
+
+/* ─── Shape primitives ──────────────────────────────────────────────────────── */
+
+.sp-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 1px;
+    flex-shrink: 0;
+}
+
+.sp-bar--h {
+    height: 6px;
+    background: var(--muted);
+}
+
+.sp-bar--heading {
+    height: 5px;
+    background: var(--muted);
+}
+
+.sp-bar--eyebrow {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.4);
+    margin-bottom: 3px;
+}
+
+.sp-bar--caption {
+    height: 2px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.sp-bar--btn {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 2px;
+    margin-top: 4px;
+}
+
+.sp-bar--cta {
+    height: 8px;
+    background: var(--muted);
+    border-radius: 2px;
+    opacity: 0.5;
+}
+
+.sp-block {
+    background: var(--border);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.sp-block--tall {
+    flex: 0 0 38%;
+    align-self: stretch;
+}
+
+.sp-row {
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+.sp-col {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+    min-width: 0;
+    justify-content: center;
+}
+
+.sp-card-mini {
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    padding: 5px 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* ─── Carousel stack indicator (link-carousel preview) ─────────────────────── */
+
+/* Slide content fills the preview height, bars pushed to the bottom. */
+.sp-slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    justify-content: flex-end;
+    padding-right: 20px;
+}
+
+/*
+ * Three thin vertical strips positioned on the right edge, suggesting
+ * stacked slides behind the current one. Fade out left-to-right.
+ */
+.sp-stack {
+    position: absolute;
+    right: 4px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    gap: 4px;
+    align-items: stretch;
+}
+
+.sp-stack-edge {
+    width: 1px;
+    background: rgba(255, 255, 255, 0.22);
+}
+
+.sp-stack-edge:nth-child(2) { background: rgba(255, 255, 255, 0.13); }
+.sp-stack-edge:nth-child(3) { background: rgba(255, 255, 255, 0.07); }
+
+.sp-footer-col {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sp-preview--split {
+    flex-direction: row;
+    padding: 0;
+    gap: 0;
+}
+
+.sp-split-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px 12px;
+}
+
+.sp-split-content--light {
+    background: #f0f0f0;
+}
+
+.sp-split-content--light .sp-bar          { background: rgba(0, 0, 0, 0.30); }
+.sp-split-content--light .sp-bar--heading { background: rgba(0, 0, 0, 0.65); height: 5px; }
+.sp-split-content--light .sp-bar--eyebrow { background: rgba(0, 0, 0, 0.38); height: 2px; }
+.sp-split-content--light .sp-bar--btn     { background: rgba(0, 0, 0, 0.55); }
+
+.sp-split-image {
+    flex: 0 0 40%;
+    background:
+        radial-gradient(ellipse 60% 75% at 22% 65%, #3a2a6e 0%, transparent 68%),
+        radial-gradient(ellipse 55% 60% at 75% 28%, #2a1f5c 0%, transparent 68%),
+        #2a001c;
+}
+
+.sp-quote-body {
+    border-left: 3px solid var(--accent);
+    padding-left: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
