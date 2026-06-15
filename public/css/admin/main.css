@@ -1,0 +1,20 @@
+/*
+ * Admin stylesheet entry point. Components are split across sibling
+ * files; this file just defines the import order. Order matters in two
+ * places: `base.css` must come first (defines the CSS custom properties
+ * everyone else uses), and `responsive.css` must come last (its
+ * @media block overrides earlier rules at mobile widths).
+ */
+@import 'base.css';
+@import 'topbar.css';
+@import 'sidebar.css';
+@import 'page-tree.css';
+@import 'content.css';
+@import 'page-editor.css';
+@import 'section.css';
+@import 'section-picker.css';
+@import 'create-page.css';
+@import 'media.css';
+@import 'carousel-editor.css';
+@import 'toast.css';
+@import 'responsive.css';

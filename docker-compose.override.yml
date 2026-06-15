@@ -1,0 +1,24 @@
+services:
+
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/the-saiged/public:ro
+      - ./src/Sections:/var/www/the-saiged/src/Sections:ro
+      - ./data/uploads:/var/www/the-saiged/data/uploads:ro
+      - ./containers/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+  php:
+    build:
+      target: base
+    volumes:
+      - ./:/var/www/the-saiged
+    env_file:
+      - ./.env
+    command: sh -c "composer install --no-interaction && php-fpm"
+
+  mysql:
+    ports:
+      - "3308:3306"

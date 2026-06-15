@@ -1,0 +1,44 @@
+/*
+ * Global public stylesheet — loaded once by Page::render before any
+ * section's own CSS. Holds what every section shares: the brand font,
+ * design tokens, and a minimal reset. Section stylesheets layer on top
+ * and reference the tokens defined here.
+ *
+ * Kalice is the client's commercial serif (foundry: Claude Type); the
+ * font files were supplied embedded in the client's design source.
+ */
+@font-face {
+    font-family: 'Kalice';
+    src: url('/fonts/Kalice-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Kalice';
+    src: url('/fonts/Kalice-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --black: #202020;
+    --white: #ffffff;
+    --cream: #f7f3ed;
+    --taupe: #a07b68;
+    --muted: #6f6a64;
+    --serif: 'Kalice', Georgia, serif;
+    --sans:  Arial, Helvetica, sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--sans);
+    color: var(--black);
+}

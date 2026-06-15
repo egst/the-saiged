@@ -1,0 +1,19 @@
+/.env
+/.deploy.env
+/.htpasswd
+/vendor/
+/node_modules/
+/db-backups/
+/.phpunit.cache/
+
+# User-uploaded media — committed only as an empty dir via .gitkeep.
+/data/uploads/*
+!/data/uploads/.gitkeep
+
+# OS
+.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~

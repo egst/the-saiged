@@ -1,0 +1,35 @@
+services:
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./containers/nginx/Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+      - ${HTPASSWD_PATH}:/etc/nginx/.htpasswd:ro
+      # Read-only access to the shared uploads volume — nginx only serves them.
+      - uploads:/var/www/the-saiged/data/uploads:ro
+    restart: unless-stopped
+
+  php:
+    build:
+      target: prod
+    env_file:
+      - .env
+    # PHP writes to the uploads volume during upload + variant generation.
+    volumes:
+      - uploads:/var/www/the-saiged/data/uploads
+    restart: unless-stopped
+
+  mysql:
+    environment:
+      MYSQL_PASSWORD:      ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    restart: unless-stopped
+
+volumes:
+  uploads:

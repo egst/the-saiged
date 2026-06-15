@@ -1,0 +1,12 @@
+/*
+ * Create/Copy page views — share the .create-page class. The view-level
+ * grid is in page-editor.css (since .page-editor and .create-page share
+ * the same outer flex-column-gap-large). Here only the form-specific
+ * stacking: labels + action row, gap-large between siblings.
+ */
+.create-page form {
+    max-width: 30rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-large);
+}

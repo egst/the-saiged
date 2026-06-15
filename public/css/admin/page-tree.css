@@ -1,0 +1,171 @@
+/*
+ * Page tree — recursively nested directory view.
+ *
+ * Each nesting level has its OWN indicator column and its OWN dashed
+ * connector line. The dashed line of level N sits at the SAME X column as
+ * the indicators of level N-1 (its parent level). Each .page-tree-children
+ * container shifts its content right by --indent from its parent's content
+ * area, and draws its own dashed line at -indent/2 from its left edge
+ * (midway between the parent's box edge and this level's box edge).
+ *
+ * Every entry — top-level or nested — has the same internal layout:
+ * indicator absolutely positioned at `medium` from the entry's left edge,
+ * inside the box. Padding-left reserves space for that indicator.
+ *
+ * Spacing: small (vertical padding, gaps between entries), medium
+ * (horizontal padding, indicator-to-edge and indicator-to-text gaps).
+ */
+.page-tree {
+    --indicator-size: 0.7rem;
+    --indent: calc(var(--space-medium) * 2 + var(--indicator-size));
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+}
+
+.page-tree a,
+.page-tree summary {
+    position: relative;
+    display: block;
+    padding: var(--space-small) var(--space-medium);
+    padding-left: var(--indent);
+    border-radius: 4px;
+    color: var(--text);
+    text-decoration: none;
+    line-height: 1.3;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+}
+
+.page-tree summary::-webkit-details-marker {
+    display: none;
+}
+
+.page-tree a:hover,
+.page-tree summary:hover {
+    background: var(--bg);
+}
+
+.page-tree a.active {
+    background: var(--accent);
+    color: white;
+}
+
+.page-tree a small {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: var(--space-small);
+}
+
+.page-tree a.active small {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/*
+ * Active-path styling:
+ * - Ancestors of the active page get accent-colored text + triangle so
+ *   the user can see the path from root to the page they're editing.
+ * - When such an ancestor is COLLAPSED, the active page is hidden under
+ *   it, so the directory summary takes over the visual role of "current
+ *   location" — accent background, just like the active page itself
+ *   when it's visible.
+ */
+.page-tree-dir.has-active > summary {
+    color: var(--accent);
+}
+
+.page-tree-dir.has-active > summary::before {
+    background: var(--accent);
+}
+
+.page-tree-dir.has-active:not([open]) > summary {
+    background: var(--accent);
+    color: white;
+}
+
+.page-tree-dir.has-active:not([open]) > summary::before {
+    background: white;
+}
+
+/*
+ * Indicator container — same dimensions for both dot and triangle, sitting
+ * inside the entry's left padding at a fixed offset from the box edge.
+ * Identical positioning for all nesting levels — what shifts between
+ * levels is the entry box itself (via .page-tree-children margin-left).
+ */
+.page-tree a::before,
+.page-tree summary::before {
+    content: '';
+    position: absolute;
+    left: var(--space-medium);
+    top: calc(var(--space-small) + 0.65em);
+    width: var(--indicator-size);
+    height: var(--indicator-size);
+    box-sizing: border-box;
+    transform: translateY(-50%);
+}
+
+.page-tree a[data-status=draft]::before {
+    border-radius: 50%;
+    border: 1px solid var(--muted);
+}
+
+.page-tree a[data-status=published]::before {
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.page-tree a.active[data-status=draft]::before {
+    border-color: white;
+}
+
+.page-tree a.active[data-status=published]::before {
+    background: white;
+}
+
+/*
+ * Directory triangle — CSS-clipped, sized smaller than the container so it
+ * shares the same outer dimensions as the page dot. Rotation is around the
+ * container's geometric center, so the visual position doesn't drift when
+ * toggling open/closed.
+ */
+.page-tree summary::before {
+    background: var(--muted);
+    clip-path: polygon(20% 15%, 20% 85%, 80% 50%);
+    transform: translateY(-50%) rotate(0deg);
+    transform-origin: center;
+    transition: transform 0.15s ease;
+}
+
+.page-tree-dir[open] > summary::before {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/*
+ * Nested children container — shifted right by --indent from its parent's
+ * content area. Draws its own dashed connector at -indent/2 (midway
+ * between the parent's box-edge and this level's box-edge), which lands
+ * in the same column as the parent level's indicators.
+ */
+.page-tree-children {
+    position: relative;
+    margin-top: var(--space-small);
+    margin-left: var(--indent);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+}
+
+.page-tree-children::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--indent) / -2);
+    /* Aligned with the top edge of the first child and the bottom
+       edge of the last child (full container height). */
+    top: 0;
+    bottom: 0;
+    border-left: 1px dashed var(--border);
+}

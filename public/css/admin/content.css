@@ -1,0 +1,48 @@
+/*
+ * Content area — the right panel that hosts views (page editor, create
+ * page, copy page). Also defines the generic input / textarea / label
+ * appearance shared by every view inside #content, plus the placeholder
+ * message styles used for "select a page" and error empty-states.
+ */
+#content {
+    grid-area: content;
+    overflow-y: auto;
+    padding: var(--space-large);
+}
+
+#content input,
+#content textarea {
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: var(--space-small) var(--space-medium);
+    font: inherit;
+}
+
+#content textarea {
+    min-height: 6rem;
+    resize: vertical;
+}
+
+/*
+ * Labels are mini flex columns — text on top, input below, separated by a
+ * `small` gap. Nothing outside the label needs to know about that detail;
+ * the parent form/panel just stacks labels with its own gap.
+ */
+#content label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.placeholder {
+    color: var(--muted);
+}
+
+.placeholder.error {
+    color: var(--danger);
+}
