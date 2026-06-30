@@ -182,6 +182,13 @@
     min-height: 21rem;
 }
 
+/* Scroll-gallery cards hold an image and a caption. */
+.scroll-gallery-item-admin,
+.scroll-gallery-add {
+    flex: 0 0 18rem;
+    min-height: 18rem;
+}
+
 /*
  * Spinner overlay shown inside an image preview while the thumbnail loads.
  * Appended as a child element; removed once img fires load/error.

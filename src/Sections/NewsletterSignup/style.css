@@ -1,0 +1,67 @@
+.newsletter-signup {
+    padding: clamp(80px, 12vw, 140px) clamp(32px, 7vw, 96px);
+    background: #fafafa;
+    text-align: center;
+    border-top: 1px solid rgba(17, 17, 17, 0.08);
+}
+
+.newsletter-heading {
+    margin: 0 0 16px;
+    font-family: var(--sans);
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: #111;
+}
+
+.newsletter-body {
+    margin: 0 0 42px;
+    font-size: clamp(15px, 1.3vw, 18px);
+    line-height: 1.5;
+    color: #666;
+}
+
+.newsletter-form {
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.newsletter-form input[type="email"] {
+    flex: 1;
+    padding: 14px 0;
+    border: none;
+    border-bottom: 1px solid rgba(17, 17, 17, 0.2);
+    background: transparent;
+    font-size: 15px;
+    color: #111;
+    transition: border-color 200ms ease;
+}
+
+.newsletter-form input[type="email"]::placeholder {
+    color: #999;
+}
+
+.newsletter-form input[type="email"]:focus {
+    outline: none;
+    border-bottom-color: #111;
+}
+
+.newsletter-form button {
+    padding: 14px 32px;
+    border: 1px solid rgba(17, 17, 17, 0.2);
+    background: transparent;
+    font-size: 14px;
+    color: #111;
+    cursor: pointer;
+    transition: all 200ms ease;
+    white-space: nowrap;
+}
+
+.newsletter-form button:hover {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+}

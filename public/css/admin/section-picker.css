@@ -306,3 +306,14 @@
     flex-direction: column;
     gap: 5px;
 }
+
+/* Reusable image placeholder tile — same radial gradient as sp-preview--img. */
+.sp-img-tile {
+    background:
+        radial-gradient(ellipse 60% 75% at 22% 65%, #3a2a6e 0%, transparent 68%),
+        radial-gradient(ellipse 55% 60% at 75% 28%, #2a1f5c 0%, transparent 68%),
+        radial-gradient(ellipse 70% 50% at 52% 90%, #1e2d7a 0%, transparent 68%),
+        #2a001c;
+    border-radius: 2px;
+    flex-shrink: 0;
+}

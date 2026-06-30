@@ -1,0 +1,25 @@
+.quote {
+    padding: clamp(40px, 6vw, 80px) clamp(32px, 6vw, 68px);
+    background: #fafafa;
+    border-left: 3px solid #111;
+}
+
+.quote-text {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(26px, 3.2vw, 48px);
+    font-weight: 400;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #111;
+}
+
+.quote-cite {
+    display: block;
+    margin-top: 24px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-style: normal;
+    color: #666;
+    letter-spacing: 0.02em;
+}

@@ -1,0 +1,18 @@
+.captioned-image {
+    margin: 0;
+    width: 100%;
+}
+
+.captioned-image-img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+}
+
+.captioned-image-caption {
+    padding: 16px clamp(32px, 6vw, 68px);
+    font-size: 13px;
+    color: #999;
+    font-style: italic;
+}

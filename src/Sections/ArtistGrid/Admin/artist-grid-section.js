@@ -99,7 +99,8 @@ export default class ArtistGridSection extends Section {
             col.className = 'sp-col'
 
             const img = document.createElement('div')
-            img.style.cssText = 'width:100%; aspect-ratio:1.15/1; background:rgba(0,0,0,0.08); margin-bottom:4px'
+            img.className = 'sp-img-tile'
+            img.style.cssText = 'width:100%; aspect-ratio:1.15/1; margin-bottom:4px'
 
             col.append(img, bar(90, 'sp-bar sp-bar--heading'), bar(55))
             row.append(col)
