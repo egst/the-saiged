@@ -115,4 +115,53 @@ final class PageTest extends TestCase {
         $this->assertStringContainsString('A &quot;quoted&quot; desc &amp; more',        $html);
     }
 
+    function testRenderIncludesOverlayAssets (): void {
+        $page = new Page(
+            id:       1,
+            path:     'p',
+            title:    't',
+            metaDesc: null,
+            status:   PageStatus::Draft,
+            sections: [],
+        );
+
+        $html = $page->render();
+
+        $this->assertStringContainsString('/css/public/overlay.css',              $html);
+        $this->assertStringContainsString('<script type="module" src="/js/main.js">', $html);
+    }
+
+    function testPartialReturnsTitleBodyAndCssLinksWithoutTheFullDocument (): void {
+        $page = new Page(
+            id:       1,
+            path:     'p',
+            title:    'My Page',
+            metaDesc: null,
+            status:   PageStatus::Draft,
+            sections: [new ArticleSection(content: 'Hello World')],
+        );
+
+        $partial = $page->partial();
+
+        $this->assertSame('My Page', $partial['title']);
+        $this->assertStringContainsString('Hello World', $partial['html']);
+        $this->assertStringNotContainsString('<!DOCTYPE html>', $partial['html']);
+        $this->assertSame(['/sections/Article/style.css'], $partial['cssLinks']);
+    }
+
+    function testPartialDeduplicatesCssLinksAcrossRepeatedSections (): void {
+        $page = new Page(
+            id:       1,
+            path:     'p',
+            title:    't',
+            metaDesc: null,
+            status:   PageStatus::Draft,
+            sections: [new ArticleSection(content: 'a'), new ArticleSection(content: 'b')],
+        );
+
+        $partial = $page->partial();
+
+        $this->assertSame(['/sections/Article/style.css'], $partial['cssLinks']);
+    }
+
 }

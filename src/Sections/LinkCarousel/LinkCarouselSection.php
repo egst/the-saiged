@@ -73,8 +73,9 @@ final readonly class LinkCarouselSection implements Section {
             $title      = htmlspecialchars($item->title,      ENT_QUOTES);
             $buttonText = htmlspecialchars($item->buttonText, ENT_QUOTES);
             $buttonHref = htmlspecialchars($item->buttonHref, ENT_QUOTES);
-            $active     = $index === 0 ? ' is-active' : '';
-            $slides    .= "<div class=\"link-carousel-slide$active\" style=\"background-image: url($url);\" data-eyebrow=\"$eyebrow\" data-title=\"$title\" data-button-text=\"$buttonText\" data-button-href=\"$buttonHref\"></div>\n";
+            $active      = $index === 0 ? ' is-active' : '';
+            $overlayAttr = $item->openAsOverlay ? ' data-overlay' : '';
+            $slides     .= "<div class=\"link-carousel-slide$active\" style=\"background-image: url($url);\" data-eyebrow=\"$eyebrow\" data-title=\"$title\" data-button-text=\"$buttonText\" data-button-href=\"$buttonHref\"$overlayAttr></div>\n";
             $barActive  = $index === 0 ? ' is-active' : '';
             $bars      .= "<div class=\"link-carousel-progress-line$barActive\"><span></span></div>\n";
         }
@@ -84,8 +85,9 @@ final readonly class LinkCarouselSection implements Section {
         $title      = htmlspecialchars($first->title,      ENT_QUOTES);
         $buttonText = htmlspecialchars($first->buttonText, ENT_QUOTES);
         $buttonHref = htmlspecialchars($first->buttonHref, ENT_QUOTES);
-        $hidden     = $first->buttonText === '' ? ' hidden' : '';
-        $button     = "<a class=\"link-carousel-button\"$hidden href=\"$buttonHref\">$buttonText</a>";
+        $hidden      = $first->buttonText === '' ? ' hidden' : '';
+        $overlayAttr = $first->openAsOverlay ? ' data-overlay' : '';
+        $button      = "<a class=\"link-carousel-button\"$hidden$overlayAttr href=\"$buttonHref\">$buttonText</a>";
 
         return <<<HTML
             <section class="link-carousel">

@@ -23,6 +23,8 @@ final class PublicController {
         $page = $this->pages->findPublishedByPath($path);
         if ($page === null)
             return $this->notFound($request);
+        if ($request->header('x-partial') === '1')
+            return Response::json($page->partial());
         return Response::html($page->render());
     }
 

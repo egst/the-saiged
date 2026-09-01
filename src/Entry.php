@@ -39,19 +39,19 @@ final class Entry {
     /** @return list<Route> */
     private function routes (): array {
         return [
-            Route::get    ('/api/admin/sections',        AdminController  ::handler('listSections')),
-            Route::get    ('/api/admin/pages',           AdminController  ::handler('listPages')),
-            Route::post   ('/api/admin/pages',           AdminController  ::handler('createPage')),
-            Route::get    ('/api/admin/pages/{id}',      AdminController  ::handler('getPage')),
-            Route::put    ('/api/admin/pages/{id}',      AdminController  ::handler('updatePage')),
-            Route::delete ('/api/admin/pages/{id}',      AdminController  ::handler('deletePage')),
-            Route::post   ('/api/admin/pages/{id}/copy', AdminController  ::handler('copyPage')),
-            Route::get    ('/api/admin/uploads',                  MediaController  ::handler('listUploads')),
-            Route::post   ('/api/admin/uploads',                  MediaController  ::handler('createUpload')),
-            Route::delete ('/api/admin/uploads/{id}',             MediaController  ::handler('deleteUpload')),
-            Route::post   ('/api/admin/uploads/{id}/variants',    MediaController  ::handler('ensureVariant')),
-            Route::any    ('/api/*',                     AdminController  ::handler('notFound')),
-            Route::any    ('/*',                         PublicController ::handler('page')),
+            Route::get    ('/api/admin/sections',              AdminController  ::handler('listSections')),
+            Route::get    ('/api/admin/pages',                 AdminController  ::handler('listPages')),
+            Route::post   ('/api/admin/pages',                 AdminController  ::handler('createPage')),
+            Route::get    ('/api/admin/pages/{id}',            AdminController  ::handler('getPage')),
+            Route::put    ('/api/admin/pages/{id}',            AdminController  ::handler('updatePage')),
+            Route::delete ('/api/admin/pages/{id}',            AdminController  ::handler('deletePage')),
+            Route::post   ('/api/admin/pages/{id}/copy',       AdminController  ::handler('copyPage')),
+            Route::get    ('/api/admin/uploads',               MediaController  ::handler('listUploads')),
+            Route::post   ('/api/admin/uploads',               MediaController  ::handler('createUpload')),
+            Route::delete ('/api/admin/uploads/{id}',          MediaController  ::handler('deleteUpload')),
+            Route::post   ('/api/admin/uploads/{id}/variants', MediaController  ::handler('ensureVariant')),
+            Route::any    ('/api/*',                           AdminController  ::handler('notFound')),
+            Route::any    ('/*',                               PublicController ::handler('page')),
         ];
     }
 

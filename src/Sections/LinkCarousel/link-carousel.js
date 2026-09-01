@@ -22,11 +22,15 @@ const initCarousel = root => {
     let current = 0
 
     const updateContent = slide => {
-        eyebrow.textContent  = slide.dataset.eyebrow   ?? ''
-        title.textContent    = slide.dataset.title     ?? ''
+        eyebrow.textContent  = slide.dataset.eyebrow    ?? ''
+        title.textContent    = slide.dataset.title      ?? ''
         button.textContent   = slide.dataset.buttonText ?? ''
         button.href          = slide.dataset.buttonHref ?? ''
         button.hidden        = (slide.dataset.buttonText ?? '') === ''
+        if (slide.hasAttribute('data-overlay'))
+            button.setAttribute('data-overlay', '')
+        else
+            button.removeAttribute('data-overlay')
     }
 
     const advance = index => {

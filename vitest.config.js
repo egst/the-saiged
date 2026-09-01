@@ -16,6 +16,14 @@ export default defineConfig({
         // jsdom and fully sufficient for our vanilla-JS components, which
         // touch document.createElement / events / etc.
         environment: 'happy-dom',
+        // The overlay module appends real <link rel="stylesheet"> tags to
+        // document.head; without this, happy-dom fetches them over the
+        // network during tests.
+        environmentOptions: {
+            happyDOM: {
+                settings: {disableCSSFileLoading: true},
+            },
+        },
     },
     resolve: {
         alias: {

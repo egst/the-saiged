@@ -23,7 +23,7 @@ export default class LinkCarouselSection extends Section {
     #addButton = document.createElement('button')
 
     /**
-     * @param {Array<{uploadId: number, eyebrow: string, title: string, buttonText: string, buttonHref: string, thumbUrl: string | null}>} items
+     * @param {Array<{uploadId: number, eyebrow: string, title: string, buttonText: string, buttonHref: string, openAsOverlay: boolean, thumbUrl: string | null}>} items
      * @param {Api} api
      */
     constructor (items, api) {
@@ -57,12 +57,13 @@ export default class LinkCarouselSection extends Section {
             )
                 throw new Error('Invalid LinkCarouselSection item')
             return {
-                uploadId:   raw.uploadId,
-                eyebrow:    raw.eyebrow,
-                title:      raw.title,
-                buttonText: raw.buttonText,
-                buttonHref: raw.buttonHref,
-                thumbUrl:   `/uploads/${raw.uploadId}/thumb-200x200.webp`,
+                uploadId:      raw.uploadId,
+                eyebrow:       raw.eyebrow,
+                title:         raw.title,
+                buttonText:    raw.buttonText,
+                buttonHref:    raw.buttonHref,
+                openAsOverlay: raw.openAsOverlay === true,
+                thumbUrl:      `/uploads/${raw.uploadId}/thumb-200x200.webp`,
             }
         })
         return new LinkCarouselSection(items, api)
@@ -104,11 +105,12 @@ export default class LinkCarouselSection extends Section {
     toObject () {
         return {
             items: this.items.map(item => ({
-                uploadId:   item.uploadId,
-                eyebrow:    item.eyebrow,
-                title:      item.title,
-                buttonText: item.buttonText,
-                buttonHref: item.buttonHref,
+                uploadId:      item.uploadId,
+                eyebrow:       item.eyebrow,
+                title:         item.title,
+                buttonText:    item.buttonText,
+                buttonHref:    item.buttonHref,
+                openAsOverlay: item.openAsOverlay,
             })),
         }
     }
@@ -187,6 +189,19 @@ export default class LinkCarouselSection extends Section {
         buttonHrefInput.addEventListener('input', () => { item.buttonHref = buttonHrefInput.value })
         buttonHrefLabel.append(buttonHrefInput)
 
+        const overlayLabel = document.createElement('label')
+        overlayLabel.className = 'carousel-checkbox-label'
+        overlayLabel.append('Open as overlay ')
+        const overlayInput = document.createElement('input')
+        overlayInput.type    = 'checkbox'
+        overlayInput.name    = 'openAsOverlay'
+        overlayInput.checked = item.openAsOverlay
+        overlayInput.addEventListener('change', () => {
+            item.openAsOverlay = overlayInput.checked
+            this.#fireInput()
+        })
+        overlayLabel.append(overlayInput)
+
         const controls = document.createElement('div')
         controls.className = 'carousel-item-controls'
 
@@ -214,7 +229,7 @@ export default class LinkCarouselSection extends Section {
         removeButton.addEventListener('click', () => this.#remove(index))
 
         controls.append(upButton, downButton, removeButton)
-        card.append(preview, eyebrowLabel, titleLabel, buttonTextLabel, buttonHrefLabel, controls)
+        card.append(preview, eyebrowLabel, titleLabel, buttonTextLabel, buttonHrefLabel, overlayLabel, controls)
         return card
     }
 
@@ -225,12 +240,13 @@ export default class LinkCarouselSection extends Section {
 
         const newIndex = this.items.length
         this.items.push({
-            uploadId:   upload.id,
-            eyebrow:    '',
-            title:      '',
-            buttonText: '',
-            buttonHref: '',
-            thumbUrl:   upload.thumbUrl,
+            uploadId:      upload.id,
+            eyebrow:       '',
+            title:         '',
+            buttonText:    '',
+            buttonHref:    '',
+            openAsOverlay: false,
+            thumbUrl:      upload.thumbUrl,
         })
         this.#renderItems()
         this.#fireInput()

@@ -152,27 +152,30 @@
     border-color: var(--accent);
 }
 
-/* Link-carousel cards are wider and taller — they hold four text inputs
- * plus a preview, so both cards and the add button use a larger size. */
-.link-carousel-item {
-    flex: 0 0 22rem;
-    min-height: 34rem;
-}
-
+/* Link-carousel cards: four text inputs + preview + overlay checkbox. */
+.link-carousel-item,
 .link-carousel-add {
     flex: 0 0 22rem;
-    min-height: 34rem;
+    min-height: 36rem;
 }
 
-/* Project-grid cards hold an image, type, heading, and body — wider and
- * slightly taller than link-carousel. Add button matches card dimensions. */
-.project-grid-item {
-    flex: 0 0 26rem;
+/* Checkbox fields inside carousel cards — horizontal label so the checkbox
+ * sits beside the text instead of stacking under it. */
+#content .carousel-checkbox-label {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-small);
 }
 
+#content .carousel-checkbox-label input[type="checkbox"] {
+    width: auto;
+}
+
+/* Project-grid cards: image, type, heading, body textarea, href, overlay checkbox. */
+.project-grid-item,
 .project-grid-add {
     flex: 0 0 26rem;
-    min-height: 35rem;
+    min-height: 42rem;
 }
 
 /* Artist-grid cards hold an image, name, and birth year. */

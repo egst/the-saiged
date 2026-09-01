@@ -48,6 +48,50 @@ final class PublicControllerTest extends TestCase {
         $this->assertStringContainsString('<title>About</title>', $response->body);
     }
 
+    function testPageWithXPartialHeaderReturnsJsonPartialInsteadOfFullDocument (): void {
+        $page = new Page(1, 'about', 'About', null, PageStatus::Published, []);
+        $this->mockService(
+            fn ($service) =>
+                $service
+                    ->method('findPublishedByPath')
+                    ->willReturn($page)
+        );
+
+        $response = $this->invoke('page', $this->request('/about', ['x-partial' => '1']));
+
+        $this->assertSame(200, $response->status);
+        $this->assertStringNotContainsString('<!DOCTYPE html>', $response->body);
+        $this->assertStringContainsString('"title":"About"',   $response->body);
+    }
+
+    function testPageWithoutXPartialHeaderReturnsFullHtmlDocument (): void {
+        $page = new Page(1, 'about', 'About', null, PageStatus::Published, []);
+        $this->mockService(
+            fn ($service) =>
+                $service
+                    ->method('findPublishedByPath')
+                    ->willReturn($page)
+        );
+
+        $response = $this->invoke('page', $this->request('/about'));
+
+        $this->assertStringContainsString('<!DOCTYPE html>', $response->body);
+    }
+
+    function testPageStillReturns404ForXPartialRequestWhenPageMissing (): void {
+        $this->mockService(
+            fn ($service) =>
+                $service
+                    ->method('findPublishedByPath')
+                    ->willReturn(null)
+        );
+
+        $response = $this->invoke('page', $this->request('/missing', ['x-partial' => '1']));
+
+        $this->assertSame(404, $response->status);
+        $this->assertStringContainsString('Page not found', $response->body);
+    }
+
     function testPageStripsLeadingSlashBeforeLookup (): void {
         $this->mockService(
             fn ($service) =>
@@ -129,8 +173,9 @@ final class PublicControllerTest extends TestCase {
         $this->assertStringContainsString('Something went wrong', $html);
     }
 
-    private function request (string $path): Request {
-        return new Request(Method::GET, new Path($path), new Query());
+    /** @param array<string, string> $headers */
+    private function request (string $path, array $headers = []): Request {
+        return new Request(Method::GET, new Path($path), new Query(), $headers);
     }
 
     /** @param Closure(MockObject&PageService) $configuration */

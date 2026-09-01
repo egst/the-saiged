@@ -80,9 +80,7 @@ final readonly class Page {
             ? '<meta name="description" content="' . htmlspecialchars($this->metaDesc, ENT_QUOTES) . '">'
             : '';
         $assets   = $this->renderAssetTags();
-        $body     = '';
-        foreach ($this->sections as $section)
-            $body .= $section->render();
+        $body     = $this->renderBody();
 
         return <<<HTML
             <!DOCTYPE html>
@@ -92,13 +90,24 @@ final readonly class Page {
                 <title>$title</title>
                 $metaDesc
                 <link rel="stylesheet" href="/css/public/main.css">
+                <link rel="stylesheet" href="/css/public/overlay.css">
                 $assets
             </head>
             <body>
                 $body
+                <script type="module" src="/js/main.js"></script>
             </body>
             </html>
             HTML;
+    }
+
+    /** @return array{title: string, html: string, cssLinks: list<string>} */
+    function partial (): array {
+        return [
+            'title'    => $this->title,
+            'html'     => $this->renderBody(),
+            'cssLinks' => $this->cssLinkUrls(),
+        ];
     }
 
     /** @return list<Section> */
@@ -121,28 +130,43 @@ final readonly class Page {
         return $sections;
     }
 
-    /**
-     * Collects unique section classes used by this page and emits <link> and
-     * <script type="module"> tags for each declared asset. Folder name is
-     * derived from the class' parent namespace via reflection, so the URL is
-     * decoupled from the lowercase type identifier.
-     */
-    private function renderAssetTags (): string {
-        $seen = [];
-        $tags = [];
+    /** @return array<string, string> map of section class => folder name, deduplicated */
+    private function sectionFolders (): array {
+        $folders = [];
         foreach ($this->sections as $section) {
             $class = $section::class;
-            if (isset($seen[$class]))
+            if (isset($folders[$class]))
                 continue;
-            $seen[$class] = true;
+            $folders[$class] = basename(str_replace('\\', '/', (new ReflectionClass($class))->getNamespaceName()));
+        }
+        return $folders;
+    }
 
-            $folder = basename(str_replace('\\', '/', (new ReflectionClass($class))->getNamespaceName()));
+    /** @return list<string> */
+    private function cssLinkUrls (): array {
+        $urls = [];
+        foreach ($this->sectionFolders() as $class => $folder)
+            foreach ($class::cssAssets() as $file)
+                $urls[] = "/sections/$folder/$file";
+        return $urls;
+    }
+
+    private function renderAssetTags (): string {
+        $tags = [];
+        foreach ($this->sectionFolders() as $class => $folder) {
             foreach ($class::cssAssets() as $file)
                 $tags[] = "<link rel=\"stylesheet\" href=\"/sections/$folder/$file\">";
             foreach ($class::jsAssets() as $file)
                 $tags[] = "<script type=\"module\" src=\"/sections/$folder/$file\"></script>";
         }
         return implode("\n    ", $tags);
+    }
+
+    private function renderBody (): string {
+        $body = '';
+        foreach ($this->sections as $section)
+            $body .= $section->render();
+        return $body;
     }
 
 }

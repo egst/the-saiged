@@ -38,6 +38,16 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 420ms ease;
+}
+
+a.project-grid-item {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.project-grid-item:hover .project-grid-media img {
+    transform: scale(1.04);
 }
 
 .project-grid-copy {

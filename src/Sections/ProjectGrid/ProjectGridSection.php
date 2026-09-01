@@ -11,7 +11,7 @@ final readonly class ProjectGridSection implements Section {
     private const VARIANT_HEIGHT = 800;
 
     /**
-     * @param list<array{uploadId: int, type: string, heading: string, body: string}> $items
+     * @param list<array{uploadId: int, type: string, heading: string, body: string, href: string, openAsOverlay: bool}> $items
      */
     function __construct (
         public array $items,
@@ -39,10 +39,12 @@ final readonly class ProjectGridSection implements Section {
                 throw new InvalidDataException('project-grid item data');
 
             $parsed[] = [
-                'uploadId' => $item['uploadId'],
-                'type'     => $item['type'],
-                'heading'  => $item['heading'],
-                'body'     => $item['body'],
+                'uploadId'      => $item['uploadId'],
+                'type'          => $item['type'],
+                'heading'       => $item['heading'],
+                'body'          => $item['body'],
+                'href'          => is_string($item['href'] ?? null) ? $item['href'] : '',
+                'openAsOverlay' => ($item['openAsOverlay'] ?? false) === true,
             ];
         }
 
@@ -67,8 +69,20 @@ final readonly class ProjectGridSection implements Section {
             $type    = htmlspecialchars($item['type'],    ENT_QUOTES);
             $heading = htmlspecialchars($item['heading'], ENT_QUOTES);
             $body    = htmlspecialchars($item['body'],    ENT_QUOTES);
-            $rows   .= <<<HTML
-                <article class="project-grid-item">
+            $href    = $item['href'] ?? '';
+
+            if ($href !== '') {
+                $hrefAttr    = htmlspecialchars($href, ENT_QUOTES);
+                $overlayAttr = ($item['openAsOverlay'] ?? false) ? ' data-overlay' : '';
+                $open        = "<a class=\"project-grid-item\" href=\"$hrefAttr\"$overlayAttr>";
+                $close       = '</a>';
+            } else {
+                $open  = '<article class="project-grid-item">';
+                $close = '</article>';
+            }
+
+            $rows .= <<<HTML
+                $open
                     <div class="project-grid-media">
                         <img src="$imgUrl" alt="$heading" loading="lazy">
                     </div>
@@ -77,7 +91,7 @@ final readonly class ProjectGridSection implements Section {
                         <h2 class="project-grid-heading">$heading</h2>
                         <p class="project-grid-body">$body</p>
                     </div>
-                </article>
+                $close
                 HTML;
         }
         return <<<HTML

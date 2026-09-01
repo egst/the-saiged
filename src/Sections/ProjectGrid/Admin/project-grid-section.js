@@ -22,7 +22,7 @@ export default class ProjectGridSection extends Section {
     #addButton = document.createElement('button')
 
     /**
-     * @param {Array<{uploadId: number | null, type: string, heading: string, body: string, thumbUrl: string | null}>} items
+     * @param {Array<{uploadId: number | null, type: string, heading: string, body: string, href: string, openAsOverlay: boolean, thumbUrl: string | null}>} items
      * @param {Api} api
      */
     constructor (items, api) {
@@ -55,11 +55,13 @@ export default class ProjectGridSection extends Section {
             )
                 throw new Error('Invalid ProjectGridSection item')
             return {
-                uploadId: raw.uploadId,
-                type:     raw.type,
-                heading:  raw.heading,
-                body:     raw.body,
-                thumbUrl: `/uploads/${raw.uploadId}/thumb-200x200.webp`,
+                uploadId:      raw.uploadId,
+                type:          raw.type,
+                heading:       raw.heading,
+                body:          raw.body,
+                href:          typeof raw.href === 'string' ? raw.href : '',
+                openAsOverlay: raw.openAsOverlay === true,
+                thumbUrl:      `/uploads/${raw.uploadId}/thumb-200x200.webp`,
             }
         })
         return new ProjectGridSection(items, api)
@@ -107,10 +109,12 @@ export default class ProjectGridSection extends Section {
     toObject () {
         return {
             items: this.items.map(item => ({
-                uploadId: item.uploadId,
-                type:     item.type,
-                heading:  item.heading,
-                body:     item.body,
+                uploadId:      item.uploadId,
+                type:          item.type,
+                heading:       item.heading,
+                body:          item.body,
+                href:          item.href,
+                openAsOverlay: item.openAsOverlay,
             })),
         }
     }
@@ -181,6 +185,27 @@ export default class ProjectGridSection extends Section {
         bodyArea.addEventListener('input', () => { item.body = bodyArea.value })
         bodyLabel.append(bodyArea)
 
+        const hrefLabel = document.createElement('label')
+        hrefLabel.append('Link ')
+        const hrefInput = document.createElement('input')
+        hrefInput.name  = 'href'
+        hrefInput.value = item.href
+        hrefInput.addEventListener('input', () => { item.href = hrefInput.value })
+        hrefLabel.append(hrefInput)
+
+        const overlayLabel = document.createElement('label')
+        overlayLabel.className = 'carousel-checkbox-label'
+        overlayLabel.append('Open as overlay ')
+        const overlayInput = document.createElement('input')
+        overlayInput.type    = 'checkbox'
+        overlayInput.name    = 'openAsOverlay'
+        overlayInput.checked = item.openAsOverlay
+        overlayInput.addEventListener('change', () => {
+            item.openAsOverlay = overlayInput.checked
+            this.#fireInput()
+        })
+        overlayLabel.append(overlayInput)
+
         const controls = document.createElement('div')
         controls.className = 'carousel-item-controls'
 
@@ -208,7 +233,7 @@ export default class ProjectGridSection extends Section {
         removeButton.addEventListener('click', () => this.#remove(index))
 
         controls.append(upButton, downButton, removeButton)
-        card.append(preview, typeLabel, headingLabel, bodyLabel, controls)
+        card.append(preview, typeLabel, headingLabel, bodyLabel, hrefLabel, overlayLabel, controls)
         return card
     }
 
@@ -219,11 +244,13 @@ export default class ProjectGridSection extends Section {
 
         const newIndex = this.items.length
         this.items.push({
-            uploadId: upload.id,
-            type:     '',
-            heading:  '',
-            body:     '',
-            thumbUrl: upload.thumbUrl,
+            uploadId:      upload.id,
+            type:          '',
+            heading:       '',
+            body:          '',
+            href:          '',
+            openAsOverlay: false,
+            thumbUrl:      upload.thumbUrl,
         })
         this.#renderItems()
         this.#fireInput()

@@ -12,15 +12,17 @@ final readonly class LinkCarouselItem {
         public string $title,
         public string $buttonText,
         public string $buttonHref,
+        public bool   $openAsOverlay = false,
     ) {}
 
     /** @param array<mixed, mixed> $data */
     static function fromArray (array $data): self {
-        $uploadId   = $data['uploadId']   ?? null;
-        $eyebrow    = $data['eyebrow']    ?? null;
-        $title      = $data['title']      ?? null;
-        $buttonText = $data['buttonText'] ?? null;
-        $buttonHref = $data['buttonHref'] ?? null;
+        $uploadId      = $data['uploadId']      ?? null;
+        $eyebrow       = $data['eyebrow']       ?? null;
+        $title         = $data['title']         ?? null;
+        $buttonText    = $data['buttonText']    ?? null;
+        $buttonHref    = $data['buttonHref']    ?? null;
+        $openAsOverlay = $data['openAsOverlay'] ?? false;
 
         if (!is_int($uploadId) || $uploadId <= 0)
             throw new InvalidDataException('link-carousel item', 'uploadId must be a positive integer');
@@ -34,22 +36,24 @@ final readonly class LinkCarouselItem {
             throw new InvalidDataException('link-carousel item', 'buttonHref must be a string');
 
         return new self(
-            uploadId:   $uploadId,
-            eyebrow:    $eyebrow,
-            title:      $title,
-            buttonText: $buttonText,
-            buttonHref: $buttonHref,
+            uploadId:      $uploadId,
+            eyebrow:       $eyebrow,
+            title:         $title,
+            buttonText:    $buttonText,
+            buttonHref:    $buttonHref,
+            openAsOverlay: $openAsOverlay === true,
         );
     }
 
     /** @return array<string, mixed> */
     function toArray (): array {
         return [
-            'uploadId'   => $this->uploadId,
-            'eyebrow'    => $this->eyebrow,
-            'title'      => $this->title,
-            'buttonText' => $this->buttonText,
-            'buttonHref' => $this->buttonHref,
+            'uploadId'      => $this->uploadId,
+            'eyebrow'       => $this->eyebrow,
+            'title'         => $this->title,
+            'buttonText'    => $this->buttonText,
+            'buttonHref'    => $this->buttonHref,
+            'openAsOverlay' => $this->openAsOverlay,
         ];
     }
 
