@@ -8,8 +8,8 @@ import {isObject}   from '/js/core/types.js'
  */
 
 /** Matches FooterShell.php's LOGO_WIDTH/LOGO_HEIGHT constants. */
-const LOGO_WIDTH  = 480
-const LOGO_HEIGHT = 160
+const LOGO_WIDTH  = 1920
+const LOGO_HEIGHT = 764
 
 /** @typedef {{kind: 'link', label: string, href: string} | {kind: 'text', content: string} | {kind: 'newsletter'}} FooterItemData */
 /** @typedef {{heading: string, items: FooterItemData[]}} FooterColumnData */
@@ -73,6 +73,11 @@ export default class FooterShellView {
         this.#addLogoButton.addEventListener('click', () => this.#pickLogo())
 
         this.#logoPreview.className = 'shell-logo-picked'
+        // Overrides shell-editor.css's default 3:1 box — the footer logo's
+        // own real ratio (~2.51:1) differs from Header's small 240x80 mark,
+        // which still wants the shared 3:1 default.
+        this.#logoPreview.style.aspectRatio = `${LOGO_WIDTH} / ${LOGO_HEIGHT}`
+        this.#addLogoButton.style.aspectRatio = `${LOGO_WIDTH} / ${LOGO_HEIGHT}`
         this.#logoPreview.addEventListener('click', () => this.#pickLogo())
 
         this.#saveButton = document.createElement('button')

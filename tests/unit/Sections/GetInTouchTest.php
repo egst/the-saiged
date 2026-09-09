@@ -53,11 +53,10 @@ final class GetInTouchTest extends TestCase {
         $section = new GetInTouchSection('Heading', 'CTA', '/contact');
         $html    = $section->render();
 
-        $this->assertStringContainsString('contact-footer',             $html);
-        $this->assertStringContainsString('contact-footer-header',      $html);
-        $this->assertStringContainsString('contact-footer-title',       $html);
-        $this->assertStringContainsString('contact-footer-cta',         $html);
-        $this->assertStringContainsString('--standalone',               $html);
+        $this->assertStringContainsString('get-in-touch',                $html);
+        $this->assertStringContainsString('get-in-touch-header',        $html);
+        $this->assertStringContainsString('get-in-touch-title',         $html);
+        $this->assertStringContainsString('get-in-touch-cta',           $html);
     }
 
 }

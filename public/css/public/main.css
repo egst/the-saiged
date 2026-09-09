@@ -43,6 +43,24 @@ body {
     color: var(--black);
 }
 
+/*
+ * Buttons don't inherit font-family (or several other text properties)
+ * from the document by default — that's a browser UA-stylesheet quirk,
+ * not something specific to any one component. Matches source's own
+ * global reset (near its own top-of-file base styles): without it, a
+ * button's font silently falls back to the platform's form-control
+ * font instead of whatever it's sitting inside, which is how the
+ * footer newsletter's arrow ended up looking subtly different despite
+ * every other property matching.
+ */
+button {
+    font: inherit;
+    cursor: pointer;
+    border: 0;
+    background: transparent;
+    color: inherit;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;

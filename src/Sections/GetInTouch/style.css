@@ -1,25 +1,31 @@
-.contact-footer {
+/*
+ * Renamed from the original design's .contact-footer* class names to
+ * get-in-touch* — this section is a mid-page CTA banner, not the site
+ * footer, and reusing that other component's exact class names (an
+ * artifact of both having been lifted from the same design mockup)
+ * collided with FooterShell's real .contact-footer* rules: since
+ * Section CSS loads after Shell CSS in <head>, this file's rules were
+ * winning the cascade on every page that has a GetInTouch section,
+ * silently overriding the real site footer's padding/spacing.
+ *
+ * The old .contact-footer-header (base) + .contact-footer-header--
+ * standalone (modifier) split is collapsed into one rule here — this
+ * section only ever rendered the "standalone" combination, so there's
+ * no second variant to keep separate.
+ */
+.get-in-touch {
     padding: clamp(80px, 10vw, 140px) clamp(32px, 6vw, 68px);
     background: #fff;
     border-top: 1px solid rgba(17, 17, 17, 0.08);
 }
 
-.contact-footer-header {
+.get-in-touch-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: clamp(60px, 8vw, 100px);
-    padding-bottom: clamp(60px, 8vw, 100px);
-    border-bottom: 1px solid rgba(17, 17, 17, 0.08);
 }
 
-.contact-footer-header--standalone {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.contact-footer-title {
+.get-in-touch-title {
     font-family: var(--serif);
     font-size: clamp(36px, 5vw, 72px);
     font-weight: 400;
@@ -29,7 +35,7 @@
     margin: 0;
 }
 
-.contact-footer-cta {
+.get-in-touch-cta {
     padding: 16px 40px;
     background: #111;
     color: #fff;
@@ -43,17 +49,17 @@
     margin-left: 32px;
 }
 
-.contact-footer-cta:hover {
+.get-in-touch-cta:hover {
     opacity: 0.85;
 }
 
 @media (max-width: 768px) {
-    .contact-footer-header {
+    .get-in-touch-header {
         flex-direction: column;
         gap: 32px;
     }
 
-    .contact-footer-cta {
+    .get-in-touch-cta {
         margin-left: 0;
     }
 }

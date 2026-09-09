@@ -48,10 +48,10 @@ final readonly class GetInTouchSection implements Section {
         $ctaHref = htmlspecialchars($this->ctaHref, ENT_QUOTES);
 
         return <<<HTML
-            <section class="contact-footer">
-                <div class="contact-footer-header contact-footer-header--standalone">
-                    <h2 class="contact-footer-title">$heading</h2>
-                    <a href="$ctaHref" class="contact-footer-cta">$ctaText</a>
+            <section class="get-in-touch">
+                <div class="get-in-touch-header">
+                    <h2 class="get-in-touch-title">$heading</h2>
+                    <a href="$ctaHref" class="get-in-touch-cta">$ctaText</a>
                 </div>
             </section>
             HTML;

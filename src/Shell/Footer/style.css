@@ -6,18 +6,24 @@
  *   - base box: "Spring-style Saiged Footer" (~line 2507)
  *   - column heading size/spacing: "Footer column alignment and
  *     compact single-line titles" (~4439)
- *   - column grid gaps: "Proportional footer columns" (~4751)
- *   - logo bleed: "Footer Saiged wordmark and text-only social
- *     section" (~4651) — the LAST of two logo-image blocks
+ *   - column grid (6 proportional tracks, gaps, 1180px/720px
+ *     breakpoints): "Proportional footer columns" (~4758)
  *   - newsletter input/consent typography: "Match newsletter
  *     typography to the rest of the footer" (~4836) — the LAST of two
  *     newsletter-typography blocks
  *
- * Not copied: the source's .contact-footer-columns margin-left offset
- * and its .contact-footer-brand/-nav/-top rules — those belong to a
- * different footer variant (one with a left-side brand sidebar) that
- * our markup doesn't have; copying that offset would just shove our
- * columns right for no reason.
+ * NOT copied from source: the logo. The source treats it as a giant
+ * decorative wordmark bleeding off the footer's edges (absolute
+ * positioning, vw-based sizing, negative offsets) — deliberately
+ * replaced here with a plain full-width, fixed-height, top-aligned
+ * block (see .contact-footer-logo below) per an explicit simplify
+ * request; don't re-port the source's logo rules over this.
+ *
+ * Also not copied: the source's .contact-footer-columns margin-left
+ * offset and its .contact-footer-brand/-nav/-top rules — those belong
+ * to a different footer variant (one with a left-side brand sidebar)
+ * that our markup doesn't have; copying that offset would just shove
+ * our columns right for no reason.
  *
  * .contact-footer-column-items replaces the source's raw <ul>/<li>
  * since a column can hold link/text/newsletter items interchangeably
@@ -25,27 +31,46 @@
  * same a/p typography the source's <ul> children had.
  */
 .contact-footer {
-    position: relative;
-    overflow: hidden;
-    min-height: clamp(560px, 74vw, 900px);
     padding: clamp(28px, 3.5vw, 48px) clamp(28px, 4vw, 68px) 0;
     background: #fff;
     border-top: 1px solid rgba(17, 17, 17, 0.08);
     color: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
 }
 
 .contact-footer-columns {
-    position: relative;
-    z-index: 2;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns:
+        minmax(150px, 1.15fr)
+        minmax(170px, 1.15fr)
+        minmax(140px, 0.88fr)
+        minmax(150px, 0.92fr)
+        minmax(105px, 0.68fr)
+        minmax(260px, 1.45fr);
     column-gap: clamp(22px, 2.4vw, 46px);
     row-gap: 40px;
     align-items: start;
-    margin-bottom: clamp(60px, 6vw, 110px);
+}
+
+@media (max-width: 1180px) {
+    .contact-footer-columns {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .contact-footer {
+        padding: 24px 20px 40px;
+    }
+
+    .contact-footer-columns {
+        grid-template-columns: 1fr;
+        row-gap: 28px;
+    }
+
+    .contact-footer-column h4 {
+        white-space: normal;
+        margin-bottom: 12px;
+    }
 }
 
 .contact-footer-column h4 {
@@ -58,12 +83,6 @@
     text-transform: uppercase;
     color: #000;
     white-space: nowrap;
-}
-
-@media (max-width: 920px) {
-    .contact-footer-column h4 {
-        white-space: normal;
-    }
 }
 
 .contact-footer-column-items {
@@ -86,10 +105,52 @@
     opacity: 0.55;
 }
 
-.footer-newsletter-form {
-    margin-top: 20px;
+/*
+ * Inline markdown links inside a text item (FooterItem::renderText's
+ * "[label](href)" syntax) — the consent line's "Privacy Policy" link is
+ * the real-world case. Scoped to <p> so it doesn't touch the bare <a>
+ * nav links elsewhere in a column, which stay non-underlined. Matches
+ * source's .footer-data-consent a exactly (~4836, "Match newsletter
+ * typography to the rest of the footer" — the LAST/winning of two such
+ * rules, which uses 2px not the earlier one's 3px offset).
+ */
+.contact-footer-column-items p a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
 }
 
+.footer-newsletter-form {
+    margin-top: 0;
+}
+
+/*
+ * Source's consent line has its own class (.footer-data-consent) with
+ * margin-top: 18px !important — our markup doesn't give that paragraph
+ * a distinguishing class (FooterItem::renderText renders every text
+ * item as a plain <p>), so target it structurally instead: the <p>
+ * immediately following the form is always this consent line. Without
+ * this, the row only got the column's generic 4px flex gap below it
+ * while getting a full 18px above — the row looked "shifted down"
+ * because the whitespace around it was asymmetric (22px above, 4px
+ * below), not because anything inside the row itself was off-center.
+ */
+.footer-newsletter-form + p {
+    margin-top: 18px;
+}
+
+/*
+ * .footer-newsletter-row is our name for the source's unclassed row div
+ * (`<div style="...">` wrapping the input+button). That div's styling
+ * in the source is layered three times over the page's many mockup
+ * variants — an inline style plus three separate `.footer-newsletter-
+ * form > div { ... !important }` blocks later in the cascade, each
+ * partially overriding the last. Read naively (inline style, or any one
+ * of the earlier !important blocks in isolation) you'd get padding
+ * 10px/0/8px or 4px-bottom-only — both wrong. The actual cascade winner
+ * is the LAST such block in the file, which resets padding to a flat 0
+ * and confirms margin-top: 18px.
+ */
 .footer-newsletter-row {
     display: flex;
     align-items: center;
@@ -102,6 +163,23 @@
 .footer-newsletter-row input {
     flex: 1;
     min-width: 0;
+    height: 100%;
+    /* The row's height is set by the button (its font-size:24px content
+       box is taller than the input's own ~18px line box), so
+       align-items:center on the row already centers the input's box
+       correctly — verified: equal gaps above/below. What still looked
+       off was text position *inside* the input: browsers position an
+       <input>'s value/placeholder using their own internal control
+       layout, not a plain CSS line-height centering — so a shorter
+       input box sitting centered in a taller row doesn't guarantee its
+       own text sits centered within itself. display:flex +
+       align-items:center directly on the input is the standard fix —
+       Chrome/Firefox/Safari all flex-center a text input's own content
+       when asked to, unlike relying on line-height alone. */
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
     border: 0;
     outline: 0;
     background: transparent;
@@ -118,6 +196,13 @@
 }
 
 .footer-newsletter-row button {
+    /* Verified by comparing computed styles directly against the real
+       design (design/shell-base.html, footer#contact) in-browser:
+       source's button computes to padding:0, ours defaulted to the
+       browser's UA-stylesheet button padding (1px 6px) since nothing
+       here ever reset it — that's what actually made the arrow sit
+       differently. */
+    padding: 0;
     border: 0;
     background: transparent;
     color: inherit;
@@ -126,64 +211,40 @@
 }
 
 /*
- * The logo bleeds off the left/right/bottom edges on purpose — it's a
- * huge decorative wordmark image, cropped by .contact-footer's own
- * overflow:hidden, sitting behind the columns (z-index:1 vs 2).
+ * Simplified deliberately (see file header) — full-bleed block below
+ * the columns, edge to edge with the viewport regardless of
+ * .contact-footer's own left/right padding (negative margins matching
+ * that exact padding expression cancel it out — same trick as before,
+ * just precise instead of 100vw, which can overshoot by a scrollbar's
+ * width).
+ *
+ * aspect-ratio instead of a fixed height: a constant px height stopped
+ * making sense once the box's own width shrinks with the viewport (it'd
+ * crop more and more aggressively, or barely crop at all, depending on
+ * how far off it was from the current width). aspect-ratio keeps the
+ * crop proportion constant instead — 1920/620 means "show the top ~81%
+ * of the logo's own height", at any width. overflow:hidden on this box
+ * contains the crop; the <img> is width:100%/height:auto, so it's never
+ * cropped left/right, only top-anchored and clipped at the bottom once
+ * it's taller than the box.
+ *
+ * .contact-footer itself has zero bottom padding on purpose — this
+ * logo block is the last thing in the footer and should sit flush
+ * against its bottom edge, not leave a padding gap below it.
+ *
+ * margin-top is a fixed px, not a clamp/vw value, so the gap between
+ * the columns and the logo never changes on resize.
  */
 .contact-footer-logo {
-    position: absolute;
-    left: clamp(-16px, -1vw, -6px);
-    right: clamp(-30px, -2vw, -12px);
-    bottom: clamp(-95px, -8vw, -48px);
-    z-index: 1;
-    pointer-events: none;
-    user-select: none;
+    margin-top: 64px;
+    margin-left: calc(clamp(28px, 4vw, 68px) * -1);
+    margin-right: calc(clamp(28px, 4vw, 68px) * -1);
+    aspect-ratio: 1920 / 620;
     overflow: hidden;
-    height: clamp(220px, 34vw, 620px);
-    line-height: 0;
 }
 
 .contact-footer-logo img {
     display: block;
-    width: clamp(760px, 110vw, 1960px);
-    max-width: none;
+    width: 100%;
     height: auto;
-    transform: translateX(-1.5%) translateY(1.5%);
-    transform-origin: left bottom;
-}
-
-@media (max-width: 1024px) {
-    .contact-footer {
-        min-height: 720px;
-    }
-
-    .contact-footer-logo {
-        height: clamp(180px, 30vw, 360px);
-        bottom: -52px;
-    }
-
-    .contact-footer-logo img {
-        width: clamp(620px, 122vw, 1320px);
-    }
-}
-
-@media (max-width: 640px) {
-    .contact-footer {
-        padding: 24px 20px 0;
-        min-height: 760px;
-    }
-
-    .contact-footer-columns {
-        grid-template-columns: 1fr;
-        row-gap: 28px;
-    }
-
-    .contact-footer-column h4 {
-        margin-bottom: 12px;
-    }
-
-    .contact-footer-logo {
-        height: clamp(126px, 48vw, 230px);
-        bottom: -22px;
-    }
 }

@@ -18,7 +18,7 @@ describe('FooterShellView', () => {
         api = {
             getShell:      vi.fn().mockResolvedValue({columns: [], logoUploadId: null}),
             putShell:      vi.fn().mockResolvedValue(undefined),
-            ensureVariant: vi.fn().mockResolvedValue('/uploads/1/480x160-cover.webp'),
+            ensureVariant: vi.fn().mockResolvedValue('/uploads/1/1920x764-cover.webp'),
         }
         loader = new Loader()
         vi.spyOn(Logger.prototype, 'info').mockImplementation(() => {})
@@ -209,7 +209,7 @@ describe('FooterShellView', () => {
         expect(/** @type {HTMLElement} */ (loaded.element.querySelector('.shell-logo-add')).hidden).toBe(true)
         expect(/** @type {HTMLElement} */ (loaded.element.querySelector('.shell-logo-picked')).hidden).toBe(false)
         const img = /** @type {HTMLImageElement | null} */ (loaded.element.querySelector('.shell-logo-picked img'))
-        expect(img?.src).toContain('/uploads/images/3/480x160-cover.webp')
+        expect(img?.src).toContain('/uploads/images/3/1920x764-cover.webp')
     })
 
 })

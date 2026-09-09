@@ -49,7 +49,7 @@ final class FooterShellTest extends TestCase {
 
         $this->assertStringContainsString('<footer class="contact-footer">', $html);
         $this->assertStringContainsString('<h4>SOCIAL</h4>',                 $html);
-        $this->assertStringContainsString('/uploads/images/4/480x160-cover.webp',   $html);
+        $this->assertStringContainsString('/uploads/images/4/1920x764-cover.webp',   $html);
     }
 
     function testRenderOmitsLogoImageWhenUnset (): void {

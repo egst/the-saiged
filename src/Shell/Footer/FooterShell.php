@@ -13,8 +13,18 @@ use TheSaiged\Uploads\Upload;
  */
 final readonly class FooterShell implements Shell {
 
-    const LOGO_WIDTH  = 480;
-    const LOGO_HEIGHT = 160;
+    /**
+     * Deliberately NOT a small fixed logo box like Header's — this variant
+     * is generated at the logo's own real aspect ratio (~2.51:1, matching
+     * the client's actual footer-logo.png), so ensureVariant's cover-crop
+     * is a pure resize with zero cropping. The CSS treats the file as a
+     * plain full-width block (width:100%, height:auto, no cropping at
+     * all); sizing here just needs to be large enough not to look soft
+     * when stretched to the footer's content width, not to match any
+     * particular box shape.
+     */
+    const LOGO_WIDTH  = 1920;
+    const LOGO_HEIGHT = 764;
 
     /** @param list<FooterColumn> $columns */
     function __construct (
@@ -64,7 +74,8 @@ final readonly class FooterShell implements Shell {
             $columns .= $column->render() . "\n";
 
         $logo = $this->logoUploadId !== null
-            ? '<img src="' . htmlspecialchars(self::logoUrl($this->logoUploadId), ENT_QUOTES) . '" alt="The Saiged">'
+            ? '<div class="contact-footer-logo" aria-hidden="true"><img src="'
+                . htmlspecialchars(self::logoUrl($this->logoUploadId), ENT_QUOTES) . '" alt="The Saiged"></div>'
             : '';
 
         return <<<HTML
@@ -72,7 +83,7 @@ final readonly class FooterShell implements Shell {
                 <div class="contact-footer-columns">
                     $columns
                 </div>
-                <div class="contact-footer-logo" aria-hidden="true">$logo</div>
+                $logo
             </footer>
             HTML;
     }
