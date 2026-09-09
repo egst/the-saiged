@@ -49,9 +49,13 @@
 /*
  * Logo box — same add/picked interaction as .image-break-* but sized for
  * a small logo instead of a hero photo: modest max-width close to the
- * actual variant size (no visible upscale blur), object-fit: contain so
- * the logo is never cropped, and both states share identical dimensions
- * so picking an image never changes the box size.
+ * actual variant size (no visible upscale blur), and both states share
+ * identical dimensions so picking an image never changes the box size.
+ * object-fit: cover matches every other admin preview (ImageBreak, media
+ * grid, …) — safe here because the preview <img> is the same LOGO_WIDTH x
+ * LOGO_HEIGHT cover-crop the public site renders, whose aspect ratio (3:1)
+ * already matches this box exactly, so cover never actually crops anything
+ * further; it's just the consistent default rather than a special case.
  */
 .shell-logo-add {
     flex: none;
@@ -78,7 +82,7 @@
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     transition: filter 200ms ease;
 }
 

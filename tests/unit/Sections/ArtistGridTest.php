@@ -80,7 +80,7 @@ final class ArtistGridTest extends TestCase {
 
         $w    = ArtistGridSection::VARIANT_WIDTH;
         $h    = ArtistGridSection::VARIANT_HEIGHT;
-        $this->assertStringContainsString("/uploads/7/{$w}x{$h}-cover.webp", $section->render());
+        $this->assertStringContainsString("/uploads/images/7/{$w}x{$h}-cover.webp", $section->render());
     }
 
     function testRenderOmitsBirthYearWhenEmpty (): void {

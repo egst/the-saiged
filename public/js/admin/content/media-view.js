@@ -53,7 +53,7 @@ export default class MediaView {
         this.#fileInput      = document.createElement('input')
         this.#fileInput.type = 'file'
         this.#fileInput.hidden = true
-        this.#fileInput.accept = 'image/*,video/*'
+        this.#fileInput.accept = 'image/*,video/*,.otf,.ttf,.woff,.woff2'
         this.#fileInput.addEventListener('change', () => this.#onFilePicked())
 
         this.#uploadButton = document.createElement('button')

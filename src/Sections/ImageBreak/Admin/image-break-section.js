@@ -57,7 +57,7 @@ export default class ImageBreakSection extends Section {
         return new ImageBreakSection(
             data.uploadId,
             data.caption,
-            `/uploads/${data.uploadId}/thumb-200x200.webp`,
+            `/uploads/images/${data.uploadId}/thumb-200x200.webp`,
             api,
         )
     }

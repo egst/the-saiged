@@ -248,6 +248,45 @@ export default class Api extends EventTarget {
     }
 
     /**
+     * @returns {Promise<Record<string, {
+     *     id: number, weightMin: number, weightMax: number, style: string,
+     *     upload: Record<string, unknown> | null,
+     * }[]>>} keyed by role ('heading' | 'text')
+     */
+    async getTypography () {
+        const response = await fetch('/api/admin/typography')
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to load typography'))
+
+        const data = await response.json()
+        if (!isObject(data) || !Array.isArray(data.heading) || !Array.isArray(data.text))
+            throw new Error('getTypography: invalid response shape')
+
+        return data
+    }
+
+    /**
+     * @param {string} role 'heading' | 'text'
+     * @param {{uploadId: number, weightMin: number, weightMax: number, style: string}} payload
+     */
+    async addTypographyFace (role, payload) {
+        const response = await fetch(`/api/admin/typography/${role}/faces`, {
+            method:  'POST',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify(payload),
+        })
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to add font face'))
+    }
+
+    /** @param {number} id */
+    async removeTypographyFace (id) {
+        const response = await fetch(`/api/admin/typography/faces/${id}`, {method: 'DELETE'})
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to remove font face'))
+    }
+
+    /**
      * Best-effort extraction of the backend's user-facing error message
      * from a non-2xx Response. Backend errors follow the shape
      * `{error: "<message>"}`; if parsing fails or the shape is wrong, we

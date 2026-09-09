@@ -60,7 +60,7 @@ export default class PageCoverSection extends Section {
             data.uploadId,
             data.eyebrow,
             data.heading,
-            `/uploads/${data.uploadId}/thumb-200x200.webp`,
+            `/uploads/images/${data.uploadId}/thumb-200x200.webp`,
             api,
         )
     }

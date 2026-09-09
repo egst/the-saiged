@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\LinkCarousel;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 /**
  * Full-viewport hero carousel. Each slide has a background image
@@ -12,7 +13,7 @@ use TheSaiged\Sections\Section;
  * attributes; the public-side JS (link-carousel.js) drives auto-advance
  * and updates the shared content area on each transition.
  *
- * Variant URLs are predictable (/uploads/{id}/1920x1080-cover.webp) —
+ * Variant URLs are predictable (/uploads/images/{id}/1920x1080-cover.webp) —
  * the admin pre-generates them via ensureVariant so no Imagick runs at
  * render time.
  */
@@ -66,7 +67,7 @@ final readonly class LinkCarouselSection implements Section {
 
         foreach ($this->items as $index => $item) {
             $url     = htmlspecialchars(
-                sprintf('/uploads/%d/%dx%d-cover.webp', $item->uploadId, self::VARIANT_WIDTH, self::VARIANT_HEIGHT),
+                Upload::coverImageVariantUrlFor($item->uploadId, self::VARIANT_WIDTH, self::VARIANT_HEIGHT),
                 ENT_QUOTES,
             );
             $eyebrow    = htmlspecialchars($item->eyebrow,    ENT_QUOTES);

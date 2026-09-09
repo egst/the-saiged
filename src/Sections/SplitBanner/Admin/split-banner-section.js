@@ -67,7 +67,7 @@ export default class SplitBannerSection extends Section {
             throw new Error('Invalid SplitBannerSection data')
 
         const thumbUrl = typeof data.uploadId === 'number'
-            ? `/uploads/${data.uploadId}/thumb-200x200.webp`
+            ? `/uploads/images/${data.uploadId}/thumb-200x200.webp`
             : null
 
         return new SplitBannerSection(

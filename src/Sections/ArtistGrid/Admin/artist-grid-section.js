@@ -64,7 +64,7 @@ export default class ArtistGridSection extends Section {
                 name:      raw.name,
                 birthYear: raw.birthYear,
                 thumbUrl:  typeof raw.uploadId === 'number'
-                    ? `/uploads/${raw.uploadId}/thumb-200x200.webp`
+                    ? `/uploads/images/${raw.uploadId}/thumb-200x200.webp`
                     : null,
             }
         })

@@ -24,6 +24,13 @@ final readonly class UploadService {
         'image/webp' => UploadKind::Image,
         'video/mp4'  => UploadKind::Video,
         'video/webm' => UploadKind::Video,
+        // Verified against this project's PHP 8.4 fileinfo build:
+        // OTF (CFF outlines) → vnd.ms-opentype, TTF (glyf outlines) →
+        // font/sfnt, WOFF/WOFF2 → font/woff(2).
+        'application/vnd.ms-opentype' => UploadKind::Font,
+        'font/sfnt'                   => UploadKind::Font,
+        'font/woff'                   => UploadKind::Font,
+        'font/woff2'                  => UploadKind::Font,
     ];
 
     function __construct (
@@ -86,7 +93,7 @@ final readonly class UploadService {
             [$width, $height] = $this->storage->saveOriginal($upload, $input->tempPath);
         } catch (Throwable $exception) {
             $this->repo->delete($id);
-            $this->storage->deleteAll($id);
+            $this->storage->deleteAll($upload);
             throw $exception;
         }
 
@@ -99,9 +106,10 @@ final readonly class UploadService {
 
     /** @return bool false when the id doesn't match any row */
     function delete (UploadId $id): bool {
-        if ($this->repo->getById($id->value) === null)
+        $upload = $this->repo->getById($id->value);
+        if ($upload === null)
             return false;
-        $this->storage->deleteAll($id->value);
+        $this->storage->deleteAll($upload);
         $this->repo->delete($id->value);
         return true;
     }

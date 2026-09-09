@@ -72,7 +72,7 @@ final class LinkCarouselTest extends TestCase {
             new LinkCarouselItem(uploadId: 7, eyebrow: 'E', title: 'T', buttonText: 'B', buttonHref: '/x'),
         ]);
 
-        $this->assertStringContainsString('/uploads/7/1920x1080-cover.webp', $section->render());
+        $this->assertStringContainsString('/uploads/images/7/1920x1080-cover.webp', $section->render());
     }
 
     function testRenderEscapesContent (): void {
@@ -123,7 +123,7 @@ final class LinkCarouselTest extends TestCase {
 
         $html    = $section->render();
         $firstPos  = strpos($html, 'is-active');
-        $secondPos = strpos($html, '/uploads/2/');
+        $secondPos = strpos($html, '/uploads/images/2/');
 
         $this->assertNotFalse($firstPos);
         $this->assertNotFalse($secondPos);

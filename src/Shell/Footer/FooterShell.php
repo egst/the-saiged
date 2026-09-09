@@ -4,6 +4,7 @@ namespace TheSaiged\Shell\Footer;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Shell\Shell;
+use TheSaiged\Uploads\Upload;
 
 /**
  * Site footer: a free-form list of columns (heading + items), each item
@@ -77,7 +78,7 @@ final readonly class FooterShell implements Shell {
     }
 
     static function logoUrl (int $uploadId): string {
-        return sprintf('/uploads/%d/%dx%d-cover.webp', $uploadId, self::LOGO_WIDTH, self::LOGO_HEIGHT);
+        return Upload::coverImageVariantUrlFor($uploadId, self::LOGO_WIDTH, self::LOGO_HEIGHT);
     }
 
     /** @return list<string> */

@@ -5,6 +5,8 @@ namespace TheSaiged\Shell;
 use TheSaiged\Pages\Page;
 use TheSaiged\Shell\Footer\FooterShell;
 use TheSaiged\Shell\Header\HeaderShell;
+use TheSaiged\Typography\FontRole;
+use TheSaiged\Typography\TypographyService;
 
 /**
  * Composes the full public document: header, page body, footer. Ordering
@@ -15,12 +17,25 @@ use TheSaiged\Shell\Header\HeaderShell;
  *
  * Page::partial() (used by the overlay navigation) is untouched by this —
  * the header/footer stay on screen across SPA navigation, only the body
- * swaps.
+ * swaps. Typography is likewise untouched there — it's a <head>-only
+ * concern (custom @font-face + --serif/--sans overrides), and the head
+ * never changes across SPA navigation.
  */
 final readonly class Layout {
 
+    private const FAMILY_NAME = [
+        'heading' => 'CustomHeadingFont',
+        'text'    => 'CustomTextFont',
+    ];
+
+    private const CSS_VAR_FALLBACK = [
+        'heading' => ['--serif', "Georgia, serif"],
+        'text'    => ['--sans',  "Arial, Helvetica, sans-serif"],
+    ];
+
     function __construct (
-        private ShellService $shells,
+        private ShellService      $shells,
+        private TypographyService $typography,
     ) {}
 
     function render (Page $page): string {
@@ -29,7 +44,8 @@ final readonly class Layout {
 
         $title = htmlspecialchars($page->title, ENT_QUOTES);
 
-        $shellAssets = $this->shellAssetTags($header) . "\n    " . $this->shellAssetTags($footer);
+        $shellAssets      = $this->shellAssetTags($header) . "\n    " . $this->shellAssetTags($footer);
+        $typographyStyle  = $this->typographyStyleTag($this->typography->get());
 
         return <<<HTML
             <!DOCTYPE html>
@@ -39,6 +55,7 @@ final readonly class Layout {
                 <title>$title</title>
                 {$page->metaDescTag()}
                 <link rel="stylesheet" href="/css/public/main.css">
+                $typographyStyle
                 <link rel="stylesheet" href="/css/public/overlay.css">
                 $shellAssets
                 {$page->assetTags()}
@@ -51,6 +68,62 @@ final readonly class Layout {
             </body>
             </html>
             HTML;
+    }
+
+    /**
+     * Builds @font-face rules + --serif/--sans overrides for whichever
+     * roles have at least one uploaded face. A role with none emits
+     * nothing here, leaving main.css's own Kalice/Arial declaration as
+     * the default — no fallback logic needed beyond "don't touch it".
+     *
+     * @param array<string, list<array<string, mixed>>> $facesByRole
+     */
+    private function typographyStyleTag (array $facesByRole): string {
+        $faceRules = '';
+        $overrides = '';
+
+        foreach (FontRole::cases() as $role) {
+            $faces = $facesByRole[$role->value] ?? [];
+            if (empty($faces))
+                continue;
+
+            $family = self::FAMILY_NAME[$role->value];
+            foreach ($faces as $face) {
+                $upload = $face['upload'] ?? null;
+                if (!is_array($upload))
+                    continue;
+                $url    = htmlspecialchars((string) $upload['originalUrl'], ENT_QUOTES);
+                $format = self::fontFormat((string) $upload['filename']);
+                $faceRules .= <<<CSS
+
+                    @font-face {
+                        font-family: '$family';
+                        src: url('$url') format('$format');
+                        font-weight: {$face['weightMin']} {$face['weightMax']};
+                        font-style: {$face['style']};
+                        font-display: swap;
+                    }
+                    CSS;
+            }
+
+            [$cssVar, $fallback] = self::CSS_VAR_FALLBACK[$role->value];
+            $overrides .= "    $cssVar: '$family', $fallback;\n";
+        }
+
+        if ($faceRules === '')
+            return '';
+
+        return "<style>$faceRules\n:root {\n$overrides}\n</style>";
+    }
+
+    private static function fontFormat (string $filename): string {
+        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+        return match ($ext) {
+            'ttf'   => 'truetype',
+            'woff'  => 'woff',
+            'woff2' => 'woff2',
+            default => 'opentype',
+        };
     }
 
     private function shellAssetTags (Shell $shell): string {

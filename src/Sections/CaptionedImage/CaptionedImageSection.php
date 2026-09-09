@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\CaptionedImage;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 final readonly class CaptionedImageSection implements Section {
 
@@ -41,7 +42,7 @@ final readonly class CaptionedImageSection implements Section {
     function render (): string {
         $w       = self::VARIANT_WIDTH;
         $h       = self::VARIANT_HEIGHT;
-        $src     = htmlspecialchars("/uploads/{$this->uploadId}/{$w}x{$h}-cover.webp", ENT_QUOTES);
+        $src     = htmlspecialchars(Upload::coverImageVariantUrlFor($this->uploadId, $w, $h), ENT_QUOTES);
         $alt     = htmlspecialchars($this->caption, ENT_QUOTES);
         $caption = htmlspecialchars($this->caption, ENT_QUOTES);
         $figcaptionHtml = $caption !== ''

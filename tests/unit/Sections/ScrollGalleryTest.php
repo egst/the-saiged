@@ -56,7 +56,7 @@ final class ScrollGalleryTest extends TestCase {
         ]);
         $html = $section->render();
 
-        $this->assertStringContainsString('/uploads/5/680x800-cover.webp', $html);
+        $this->assertStringContainsString('/uploads/images/5/680x800-cover.webp', $html);
     }
 
     function testRenderEscapesCaption (): void {

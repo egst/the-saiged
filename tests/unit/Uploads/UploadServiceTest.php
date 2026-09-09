@@ -47,6 +47,10 @@ final class UploadServiceTest extends TestCase {
     #[TestWith(['image/webp', 'image'])]
     #[TestWith(['video/mp4',  'video'])]
     #[TestWith(['video/webm', 'video'])]
+    #[TestWith(['application/vnd.ms-opentype', 'font'])]
+    #[TestWith(['font/sfnt',                    'font'])]
+    #[TestWith(['font/woff',                     'font'])]
+    #[TestWith(['font/woff2',                    'font'])]
     function testCreateMapsMimeToKind (string $mime, string $expectedKindValue): void {
         $upload = $this->fixtureUpload(mime: $mime, kind: UploadKind::from($expectedKindValue));
         $this->mock(
@@ -99,17 +103,18 @@ final class UploadServiceTest extends TestCase {
     }
 
     function testCreateRollsBackOnStorageFailure (): void {
+        $upload = $this->fixtureUpload();
         $this->mock(
-            repo: function ($repo) {
+            repo: function ($repo) use ($upload) {
                 $repo->method('insert')->willReturn(7);
-                $repo->method('getById')->willReturn($this->fixtureUpload());
+                $repo->method('getById')->willReturn($upload);
                 // Both delete (DB row) and the matching storage->deleteAll
                 // must be called when the disk write throws.
                 $repo->expects($this->once())->method('delete')->with(7);
             },
-            storage: function ($storage) {
+            storage: function ($storage) use ($upload) {
                 $storage->method('saveOriginal')->willThrowException(new RuntimeException('disk full'));
-                $storage->expects($this->once())->method('deleteAll')->with(7);
+                $storage->expects($this->once())->method('deleteAll')->with($upload);
             },
         );
 
@@ -148,7 +153,7 @@ final class UploadServiceTest extends TestCase {
                 $storage
                     ->expects($this->once())
                     ->method('deleteAll')
-                    ->with(42),
+                    ->with($upload),
         );
 
         $this->assertTrue(

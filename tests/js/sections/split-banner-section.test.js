@@ -1,6 +1,6 @@
 import {describe, test, expect, beforeEach, vi} from 'vitest'
 
-const MOCK_UPLOAD = {id: 9, thumbUrl: '/uploads/9/thumb-200x200.webp'}
+const MOCK_UPLOAD = {id: 9, thumbUrl: '/uploads/images/9/thumb-200x200.webp'}
 
 /** @returns {any} */
 function makeApi () {

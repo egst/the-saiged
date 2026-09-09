@@ -144,7 +144,7 @@ describe('HeaderShellView', () => {
         const preview    = /** @type {HTMLElement} */ (view.element.querySelector('.shell-logo-picked'))
         expect(addButton.hidden).toBe(true)
         expect(preview.hidden).toBe(false)
-        expect(preview.querySelector('img')?.src).toContain('/uploads/9/thumb-200x200.webp')
+        expect(preview.querySelector('img')?.src).toContain('/uploads/images/9/240x80-cover.webp')
     })
 
 })
@@ -175,7 +175,7 @@ describe('HeaderShellView logo picking', () => {
     const importWithMockedPicker = async () => {
         const v = ++_v
         vi.doMock('/js/admin/uploads/upload-picker.js', () => ({
-            default: class { open () { return Promise.resolve({id: 42, thumbUrl: '/uploads/42/thumb-200x200.webp'}) } },
+            default: class { open () { return Promise.resolve({id: 42, thumbUrl: '/uploads/images/42/thumb-200x200.webp'}) } },
         }))
         const mod = await import(`/shell/Header/Admin/header-shell-view.js?v=${v}`)
         return mod.default
@@ -192,6 +192,8 @@ describe('HeaderShellView logo picking', () => {
 
         view.element.querySelector('.shell-logo-add')?.dispatchEvent(new MouseEvent('click'))
         await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise(resolve => setTimeout(resolve, 0))
 
         expect(api.ensureVariant).toHaveBeenCalledWith(42, 240, 80)
         const addButton = /** @type {HTMLButtonElement} */ (view.element.querySelector('.shell-logo-add'))
@@ -199,13 +201,13 @@ describe('HeaderShellView logo picking', () => {
         expect(addButton.hidden).toBe(true)
         expect(preview.hidden).toBe(false)
 
-        // Regression: the preview must use the thumbnail (always present
-        // synchronously at upload time), not the header-sized variant —
-        // that one is generated async by the ensureVariant() call above,
-        // so pointing the <img> at it raced its own generation and
-        // sometimes 404'd (broken image / alt text shown instead).
+        // Regression: the preview must point at the header-sized variant
+        // only once #pickLogo has awaited ensureVariant() — it used to fire
+        // ensureVariant() without waiting and point the <img> straight at
+        // the not-yet-generated file, racing its own generation and
+        // sometimes 404ing (broken image / alt text shown instead).
         const img = /** @type {HTMLImageElement | null} */ (preview.querySelector('img'))
-        expect(img?.src).toContain('/uploads/42/thumb-200x200.webp')
+        expect(img?.src).toContain('/uploads/images/42/240x80-cover.webp')
     })
 
 })

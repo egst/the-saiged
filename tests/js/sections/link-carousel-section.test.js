@@ -29,7 +29,7 @@ describe('LinkCarouselSection', () => {
         expect(section.items).toHaveLength(2)
         expect(section.items[0].uploadId  ).toBe(1)
         expect(section.items[0].eyebrow   ).toBe('Studio')
-        expect(section.items[0].thumbUrl  ).toBe('/uploads/1/thumb-200x200.webp')
+        expect(section.items[0].thumbUrl  ).toBe('/uploads/images/1/thumb-200x200.webp')
     })
 
     test('fromObject accepts empty items list', () => {

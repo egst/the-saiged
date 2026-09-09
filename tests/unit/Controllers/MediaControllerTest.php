@@ -45,8 +45,8 @@ final class MediaControllerTest extends TestCase {
         $this->assertCount(1, $body['uploads']);
         $this->assertSame(42,            $body['uploads'][0]['id']);
         $this->assertSame('image/jpeg',  $body['uploads'][0]['mime']);
-        $this->assertSame('/uploads/42/original.jpg',       $body['uploads'][0]['originalUrl']);
-        $this->assertSame('/uploads/42/thumb-200x200.webp', $body['uploads'][0]['thumbUrl']);
+        $this->assertSame('/uploads/images/42/original.jpg',       $body['uploads'][0]['originalUrl']);
+        $this->assertSame('/uploads/images/42/thumb-200x200.webp', $body['uploads'][0]['thumbUrl']);
     }
 
     function testDeleteUploadHappyPathReturns200 (): void {

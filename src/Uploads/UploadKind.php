@@ -6,5 +6,6 @@ enum UploadKind: string {
 
     case Image = 'image';
     case Video = 'video';
+    case Font  = 'font';
 
 }

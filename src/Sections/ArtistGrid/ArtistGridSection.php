@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\ArtistGrid;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 final readonly class ArtistGridSection implements Section {
 
@@ -70,7 +71,7 @@ final readonly class ArtistGridSection implements Section {
             if ($item['uploadId'] !== null) {
                 $w    = self::VARIANT_WIDTH;
                 $h    = self::VARIANT_HEIGHT;
-                $src  = htmlspecialchars("/uploads/{$item['uploadId']}/{$w}x{$h}-cover.webp", ENT_QUOTES);
+                $src  = htmlspecialchars(Upload::coverImageVariantUrlFor($item['uploadId'], $w, $h), ENT_QUOTES);
                 $imageHtml = "<div class=\"artist-grid-image\"><img src=\"$src\" alt=\"$name\" loading=\"lazy\"></div>";
             } else {
                 $imageHtml = '<div class="artist-grid-image artist-grid-image--empty"></div>';

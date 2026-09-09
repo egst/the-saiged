@@ -55,7 +55,7 @@ export default class ScrollGallerySection extends Section {
             return {
                 uploadId: raw.uploadId,
                 caption:  raw.caption,
-                thumbUrl: `/uploads/${raw.uploadId}/thumb-200x200.webp`,
+                thumbUrl: `/uploads/images/${raw.uploadId}/thumb-200x200.webp`,
             }
         })
 

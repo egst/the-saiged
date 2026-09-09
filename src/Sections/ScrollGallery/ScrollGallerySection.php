@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\ScrollGallery;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 final readonly class ScrollGallerySection implements Section {
 
@@ -51,7 +52,7 @@ final readonly class ScrollGallerySection implements Section {
         $itemsHtml = '';
 
         foreach ($this->items as $item) {
-            $src     = htmlspecialchars("/uploads/{$item['uploadId']}/{$w}x{$h}-cover.webp", ENT_QUOTES);
+            $src     = htmlspecialchars(Upload::coverImageVariantUrlFor($item['uploadId'], $w, $h), ENT_QUOTES);
             $style   = "background-image: url($src);";
             $caption = htmlspecialchars($item['caption'], ENT_QUOTES);
             $captionHtml = $caption !== ''

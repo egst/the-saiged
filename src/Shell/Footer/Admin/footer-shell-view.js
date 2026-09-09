@@ -349,12 +349,15 @@ export default class FooterShellView {
 
         const img = document.createElement('img')
         img.alt = 'Logo'
-        // The admin preview uses the always-present 200x200 thumbnail
-        // (generated synchronously at upload time), not the footer-sized
-        // variant — that one is generated async by ensureVariant() below,
-        // so showing it here raced its own generation and 404'd until it
-        // finished (the img showing broken/alt-text bug).
-        const src = `/uploads/${this.#logoUploadId}/thumb-200x200.webp`
+        // Cover-cropped to the same LOGO_WIDTH x LOGO_HEIGHT box the public
+        // site renders, so the preview actually reflects what gets shown —
+        // a generic square thumbnail here looked cropped-wrong in this wide
+        // box. #pickLogo() awaits ensureVariant() before calling this with
+        // a freshly-picked upload, so the file is guaranteed to already
+        // exist by the time we point the <img> at it (previously this
+        // pointed straight at the not-yet-generated variant and raced it,
+        // 404ing until generation finished).
+        const src = `/uploads/images/${this.#logoUploadId}/${LOGO_WIDTH}x${LOGO_HEIGHT}-cover.webp`
 
         if (trackLoad) {
             const spinner = document.createElement('div')
@@ -379,9 +382,21 @@ export default class FooterShellView {
         if (upload === null)
             return
         this.#logoUploadId = upload.id
-        this.#syncLogoState(true)
         this.#refreshDirty()
-        this.#api.ensureVariant(upload.id, LOGO_WIDTH, LOGO_HEIGHT).catch(() => {})
+
+        this.#addLogoButton.hidden = true
+        this.#logoPreview.hidden   = false
+        const spinner = document.createElement('div')
+        spinner.className = 'img-spinner'
+        this.#logoPreview.replaceChildren(spinner)
+
+        try {
+            await this.#api.ensureVariant(upload.id, LOGO_WIDTH, LOGO_HEIGHT)
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Failed to generate logo preview'
+            this.#notifier.error(message, error)
+        }
+        this.#syncLogoState(true)
     }
 
     #addColumn () {

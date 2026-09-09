@@ -49,7 +49,7 @@ final class PageCoverTest extends TestCase {
     function testRenderEmitsPredictableVariantUrl (): void {
         $section = new PageCoverSection(uploadId: 7, eyebrow: 'e', heading: 'h');
 
-        $this->assertStringContainsString('/uploads/7/1920x1080-cover.webp', $section->render());
+        $this->assertStringContainsString('/uploads/images/7/1920x1080-cover.webp', $section->render());
     }
 
     function testRenderEscapesEyebrow (): void {

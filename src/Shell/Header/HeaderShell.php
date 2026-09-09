@@ -4,6 +4,7 @@ namespace TheSaiged\Shell\Header;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Shell\Shell;
+use TheSaiged\Uploads\Upload;
 
 /**
  * Site header: a row of text links, a logo, and a static search button
@@ -92,7 +93,7 @@ final readonly class HeaderShell implements Shell {
     }
 
     static function logoUrl (int $uploadId): string {
-        return sprintf('/uploads/%d/%dx%d-cover.webp', $uploadId, self::LOGO_WIDTH, self::LOGO_HEIGHT);
+        return Upload::coverImageVariantUrlFor($uploadId, self::LOGO_WIDTH, self::LOGO_HEIGHT);
     }
 
     /** @return list<string> */

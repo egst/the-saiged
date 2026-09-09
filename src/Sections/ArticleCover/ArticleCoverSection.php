@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\ArticleCover;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 final readonly class ArticleCoverSection implements Section {
 
@@ -47,7 +48,7 @@ final readonly class ArticleCoverSection implements Section {
     function render (): string {
         $w       = self::VARIANT_WIDTH;
         $h       = self::VARIANT_HEIGHT;
-        $url     = htmlspecialchars("/uploads/{$this->uploadId}/{$w}x{$h}-cover.webp", ENT_QUOTES);
+        $url     = htmlspecialchars(Upload::coverImageVariantUrlFor($this->uploadId, $w, $h), ENT_QUOTES);
         $style   = "background-image: url($url);";
         $eyebrow = htmlspecialchars($this->eyebrow, ENT_QUOTES);
         $heading = htmlspecialchars($this->heading, ENT_QUOTES);

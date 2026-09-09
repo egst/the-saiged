@@ -10,15 +10,17 @@
         "esModuleInterop":  true,
         "skipLibCheck":     true,
         "paths": {
-            "/js/*":       ["./public/js/*"],
-            "/sections/*": ["./src/Sections/*"],
-            "/shell/*":    ["./src/Shell/*"]
+            "/js/*":         ["./public/js/*"],
+            "/sections/*":   ["./src/Sections/*"],
+            "/shell/*":      ["./src/Shell/*"],
+            "/typography/*": ["./src/Typography/*"]
         }
     },
     "include": [
         "public/js/**/*.js",
         "src/Sections/**/Admin/*.js",
         "src/Shell/**/Admin/*.js",
+        "src/Typography/**/Admin/*.js",
         "tests/js/**/*.js"
     ]
 }

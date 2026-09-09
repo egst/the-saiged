@@ -63,7 +63,7 @@ export default class LinkCarouselSection extends Section {
                 buttonText:    raw.buttonText,
                 buttonHref:    raw.buttonHref,
                 openAsOverlay: raw.openAsOverlay === true,
-                thumbUrl:      `/uploads/${raw.uploadId}/thumb-200x200.webp`,
+                thumbUrl:      `/uploads/images/${raw.uploadId}/thumb-200x200.webp`,
             }
         })
         return new LinkCarouselSection(items, api)

@@ -44,7 +44,7 @@ final class CaptionedImageTest extends TestCase {
         $section = new CaptionedImageSection(5, 'My caption');
         $html    = $section->render();
 
-        $this->assertStringContainsString('/uploads/5/1920x1280-cover.webp', $html);
+        $this->assertStringContainsString('/uploads/images/5/1920x1280-cover.webp', $html);
     }
 
     function testRenderEscapesCaption (): void {

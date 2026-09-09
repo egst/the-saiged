@@ -15,7 +15,7 @@ export default class Upload {
      * @param {number}      id
      * @param {string}      filename
      * @param {string}      mime
-     * @param {string}      kind        'image' | 'video'
+     * @param {string}      kind        'image' | 'video' | 'font'
      * @param {number}      size        bytes
      * @param {number|null} width       only for images
      * @param {number|null} height      only for images

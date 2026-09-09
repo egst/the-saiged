@@ -64,7 +64,7 @@ export default class ArticleCoverSection extends Section {
             data.eyebrow,
             data.heading,
             data.body,
-            `/uploads/${data.uploadId}/thumb-200x200.webp`,
+            `/uploads/images/${data.uploadId}/thumb-200x200.webp`,
             api,
         )
     }

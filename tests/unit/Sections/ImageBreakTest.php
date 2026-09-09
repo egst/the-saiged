@@ -45,7 +45,7 @@ final class ImageBreakTest extends TestCase {
     function testRenderEmitsPredictableVariantUrl (): void {
         $section = new ImageBreakSection(uploadId: 7, caption: 'Studio');
 
-        $this->assertStringContainsString('/uploads/7/1920x1080-cover.webp', $section->render());
+        $this->assertStringContainsString('/uploads/images/7/1920x1080-cover.webp', $section->render());
     }
 
     function testRenderEscapesCaption (): void {

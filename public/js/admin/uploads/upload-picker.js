@@ -4,9 +4,9 @@
  */
 
 /**
- * Modal upload picker. Calls open() to show a grid of all uploads and
- * returns a promise that resolves with the picked Upload (or null if
- * the user closes the dialog without picking).
+ * Modal upload picker. Calls open(kind) to show a grid of all uploads of
+ * that kind and returns a promise that resolves with the picked Upload
+ * (or null if the user closes the dialog without picking).
  *
  * Single-use per open() call — the modal is built fresh, mounted to
  * document.body, and removed when a choice is made or canceled. State
@@ -25,9 +25,10 @@ export default class UploadPicker {
     /**
      * Open the picker and return the chosen upload, or null if canceled.
      *
+     * @param {string} kind 'image' | 'video' | 'font'
      * @returns {Promise<Upload | null>}
      */
-    async open () {
+    async open (kind = 'image') {
         const overlay = document.createElement('div')
         overlay.className = 'upload-picker-overlay'
 
@@ -75,7 +76,7 @@ export default class UploadPicker {
                     grid.append(empty)
                     return
                 }
-                for (const upload of uploads.filter(u => u.kind === 'image'))
+                for (const upload of uploads.filter(u => u.kind === kind))
                     grid.append(this.#renderTile(upload, finish))
             }).catch(error => {
                 grid.replaceChildren()

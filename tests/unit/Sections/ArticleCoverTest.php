@@ -49,7 +49,7 @@ final class ArticleCoverTest extends TestCase {
     function testRenderContainsVariantUrl (): void {
         $section = new ArticleCoverSection(9, 'E', 'H', 'B');
 
-        $this->assertStringContainsString('/uploads/9/1920x1080-cover.webp', $section->render());
+        $this->assertStringContainsString('/uploads/images/9/1920x1080-cover.webp', $section->render());
     }
 
     function testRenderEscapesContent (): void {

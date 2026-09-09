@@ -53,22 +53,46 @@ final readonly class Upload {
 
     /**
      * Public URL of the original file. Routed through nginx's whitelist alias
-     * at /uploads/{id}/original.{ext} → data/uploads/{id}/original.{ext}.
+     * at /uploads/... → data/uploads/... — mirrors UploadStorage's on-disk
+     * layout per kind (images under images/{id}/, fonts flat under fonts/,
+     * everything else flat under {id}/).
      */
     function originalUrl (): string {
-        return "/uploads/{$this->id}/original.{$this->extension()}";
+        $ext = $this->extension();
+        return match ($this->kind) {
+            UploadKind::Image => "/uploads/images/{$this->id}/original.$ext",
+            UploadKind::Font  => "/uploads/fonts/{$this->id}.$ext",
+            default           => "/uploads/{$this->id}/original.$ext",
+        };
     }
 
     /**
-     * Public URL of a previously-generated variant. The caller is responsible
-     * for having asked UploadStorage to produce it; this just builds the URL.
+     * Public URL of a previously-generated image variant. The caller is
+     * responsible for having asked UploadStorage to produce it; this just
+     * builds the URL.
      *
      * Variants live next to `original.{ext}` in the same dir — the naming
      * pattern ({spec}.{ext}) is already unambiguous (original never carries
      * dimensions, variants always do), so no extra subdir is needed.
      */
-    function variantUrl (string $spec, string $extension = 'webp'): string {
-        return "/uploads/{$this->id}/{$spec}.{$extension}";
+    function imageVariantUrl (string $spec, string $extension = 'webp'): string {
+        return self::imageVariantUrlFor($this->id, $spec, $extension);
+    }
+
+    /**
+     * Static counterpart to imageVariantUrl() for callers that only have an
+     * upload id — Sections deliberately avoid loading the full Upload row
+     * at render time (see e.g. LinkCarouselSection), so they can't call the
+     * instance method. Centralizing the URL shape here means the on-disk
+     * layout (images/ subdir, etc.) only ever needs to change in one place.
+     */
+    static function imageVariantUrlFor (int $uploadId, string $spec, string $extension = 'webp'): string {
+        return "/uploads/images/{$uploadId}/{$spec}.{$extension}";
+    }
+
+    /** Convenience for the common "cover crop at WxH" spec Sections use. */
+    static function coverImageVariantUrlFor (int $uploadId, int $width, int $height): string {
+        return self::imageVariantUrlFor($uploadId, "{$width}x{$height}-cover");
     }
 
     function extension (): string {
@@ -95,7 +119,7 @@ final readonly class Upload {
             'uploadedAt'  => $this->uploadedAt,
             'originalUrl' => $this->originalUrl(),
             'thumbUrl'    => $this->kind === UploadKind::Image
-                ? $this->variantUrl('thumb-200x200')
+                ? $this->imageVariantUrl('thumb-200x200')
                 : null,
         ];
     }

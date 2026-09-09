@@ -41,6 +41,17 @@ final class UploadRepositoryIntegrationTest extends TestCase {
         $this->assertSame(UploadKind::Video, $upload->kind);
     }
 
+    function testInsertAcceptsNullDimensionsForFont (): void {
+        $repo = Container::get(UploadRepository::class);
+        $id   = $repo->insert('brand.otf', 'application/vnd.ms-opentype', UploadKind::Font, 5000, null, null);
+
+        $upload = $repo->getById($id);
+        $this->assertNotNull($upload);
+        $this->assertNull($upload->width);
+        $this->assertNull($upload->height);
+        $this->assertSame(UploadKind::Font, $upload->kind);
+    }
+
     function testGetByIdReturnsNullForUnknown (): void {
         $this->assertNull(Container::get(UploadRepository::class)->getById(9999));
     }
@@ -105,7 +116,7 @@ final class UploadRepositoryIntegrationTest extends TestCase {
                 id          INTEGER PRIMARY KEY AUTOINCREMENT,
                 filename    TEXT NOT NULL,
                 mime        TEXT NOT NULL,
-                kind        TEXT NOT NULL CHECK(kind IN ('image', 'video')),
+                kind        TEXT NOT NULL CHECK(kind IN ('image', 'video', 'font')),
                 size        INTEGER NOT NULL,
                 width       INTEGER NULL,
                 height      INTEGER NULL,

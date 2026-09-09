@@ -61,7 +61,7 @@ export default class ProjectGridSection extends Section {
                 body:          raw.body,
                 href:          typeof raw.href === 'string' ? raw.href : '',
                 openAsOverlay: raw.openAsOverlay === true,
-                thumbUrl:      `/uploads/${raw.uploadId}/thumb-200x200.webp`,
+                thumbUrl:      `/uploads/images/${raw.uploadId}/thumb-200x200.webp`,
             }
         })
         return new ProjectGridSection(items, api)

@@ -56,7 +56,7 @@ export default class CaptionedImageSection extends Section {
         return new CaptionedImageSection(
             data.uploadId,
             data.caption,
-            `/uploads/${data.uploadId}/thumb-200x200.webp`,
+            `/uploads/images/${data.uploadId}/thumb-200x200.webp`,
             api,
         )
     }

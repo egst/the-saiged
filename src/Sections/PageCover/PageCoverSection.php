@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\PageCover;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 /**
  * Full-viewport hero section with a background image, eyebrow text, and
@@ -46,8 +47,7 @@ final readonly class PageCoverSection implements Section {
     }
 
     function render (): string {
-        $url     = sprintf(
-            '/uploads/%d/%dx%d-cover.webp',
+        $url     = Upload::coverImageVariantUrlFor(
             $this->uploadId,
             self::VARIANT_WIDTH,
             self::VARIANT_HEIGHT,

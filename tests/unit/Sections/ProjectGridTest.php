@@ -65,7 +65,7 @@ final class ProjectGridTest extends TestCase {
         $this->assertStringContainsString('project-grid-media',   $html);
         $this->assertStringContainsString('project-grid-heading', $html);
         $this->assertStringContainsString('project-grid-type',    $html);
-        $this->assertStringContainsString('/uploads/5/1200x800-cover.webp', $html);
+        $this->assertStringContainsString('/uploads/images/5/1200x800-cover.webp', $html);
     }
 
 }

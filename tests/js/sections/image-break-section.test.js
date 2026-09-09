@@ -88,7 +88,7 @@ describe('ImageBreakSection', () => {
 
         expect(addButton?.hidden   ).toBe(true)
         expect(pickedPreview?.hidden).toBe(false)
-        expect(img?.src            ).toContain('/uploads/5/thumb-200x200.webp')
+        expect(img?.src            ).toContain('/uploads/images/5/thumb-200x200.webp')
     })
 
 })

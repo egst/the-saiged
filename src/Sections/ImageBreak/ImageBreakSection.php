@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\ImageBreak;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 /**
  * Full-viewport image section with a small caption bottom-left.
@@ -45,8 +46,7 @@ final readonly class ImageBreakSection implements Section {
     }
 
     function render (): string {
-        $url     = sprintf(
-            '/uploads/%d/%dx%d-cover.webp',
+        $url     = Upload::coverImageVariantUrlFor(
             $this->uploadId,
             self::VARIANT_WIDTH,
             self::VARIANT_HEIGHT,

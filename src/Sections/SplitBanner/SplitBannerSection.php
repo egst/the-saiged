@@ -4,6 +4,7 @@ namespace TheSaiged\Sections\SplitBanner;
 
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\Section;
+use TheSaiged\Uploads\Upload;
 
 final readonly class SplitBannerSection implements Section {
 
@@ -83,8 +84,7 @@ final readonly class SplitBannerSection implements Section {
 
         $imageHtml = '';
         if ($this->uploadId !== null) {
-            $url       = sprintf(
-                '/uploads/%d/%dx%d-cover.webp',
+            $url       = Upload::coverImageVariantUrlFor(
                 $this->uploadId,
                 self::VARIANT_WIDTH,
                 self::VARIANT_HEIGHT,

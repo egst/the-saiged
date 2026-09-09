@@ -31,7 +31,7 @@ describe('ArtistGridSection', () => {
     test('fromObject derives thumbUrl from uploadId', () => {
         const section = ArtistGridSection.fromObject(validData(), makeApi())
 
-        expect(section.items[0].thumbUrl).toBe('/uploads/1/thumb-200x200.webp')
+        expect(section.items[0].thumbUrl).toBe('/uploads/images/1/thumb-200x200.webp')
         expect(section.items[1].thumbUrl).toBeNull()
     })
 

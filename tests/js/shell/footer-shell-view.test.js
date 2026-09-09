@@ -209,7 +209,7 @@ describe('FooterShellView', () => {
         expect(/** @type {HTMLElement} */ (loaded.element.querySelector('.shell-logo-add')).hidden).toBe(true)
         expect(/** @type {HTMLElement} */ (loaded.element.querySelector('.shell-logo-picked')).hidden).toBe(false)
         const img = /** @type {HTMLImageElement | null} */ (loaded.element.querySelector('.shell-logo-picked img'))
-        expect(img?.src).toContain('/uploads/3/thumb-200x200.webp')
+        expect(img?.src).toContain('/uploads/images/3/480x160-cover.webp')
     })
 
 })

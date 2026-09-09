@@ -89,7 +89,7 @@ final class HeaderShellTest extends TestCase {
 
         $html = $header->render();
 
-        $this->assertStringContainsString('/uploads/9/240x80-cover.webp', $html);
+        $this->assertStringContainsString('/uploads/images/9/240x80-cover.webp', $html);
     }
 
     function testCssAssetsAndJsAssets (): void {

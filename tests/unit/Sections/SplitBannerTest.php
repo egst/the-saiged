@@ -113,7 +113,7 @@ final class SplitBannerTest extends TestCase {
         $html = $section->render();
 
         $this->assertStringContainsString('split-banner-image', $html);
-        $this->assertStringContainsString('/uploads/5/', $html);
+        $this->assertStringContainsString('/uploads/images/5/', $html);
     }
 
     function testRenderOmitsImageWhenUploadIdNull (): void {
