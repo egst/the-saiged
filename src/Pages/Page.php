@@ -74,40 +74,44 @@ final readonly class Page {
         ];
     }
 
-    function render (): string {
-        $title    = htmlspecialchars($this->title, ENT_QUOTES);
-        $metaDesc = $this->metaDesc !== null
-            ? '<meta name="description" content="' . htmlspecialchars($this->metaDesc, ENT_QUOTES) . '">'
-            : '';
-        $assets   = $this->renderAssetTags();
-        $body     = $this->renderBody();
-
-        return <<<HTML
-            <!DOCTYPE html>
-            <html lang="en">
-            <head>
-                <meta charset="utf-8">
-                <title>$title</title>
-                $metaDesc
-                <link rel="stylesheet" href="/css/public/main.css">
-                <link rel="stylesheet" href="/css/public/overlay.css">
-                $assets
-            </head>
-            <body>
-                $body
-                <script type="module" src="/js/main.js"></script>
-            </body>
-            </html>
-            HTML;
-    }
-
     /** @return array{title: string, html: string, cssLinks: list<string>} */
     function partial (): array {
         return [
             'title'    => $this->title,
-            'html'     => $this->renderBody(),
+            'html'     => $this->bodyHtml(),
             'cssLinks' => $this->cssLinkUrls(),
         ];
+    }
+
+    /**
+     * Rendered `<meta name="description">` tag, or '' when unset. Public so
+     * Layout can assemble the full document's <head> without duplicating
+     * the escaping/formatting rule.
+     */
+    function metaDescTag (): string {
+        return $this->metaDesc !== null
+            ? '<meta name="description" content="' . htmlspecialchars($this->metaDesc, ENT_QUOTES) . '">'
+            : '';
+    }
+
+    /** <link>/<script> tags for every section's declared assets, deduplicated. Public for Layout. */
+    function assetTags (): string {
+        $tags = [];
+        foreach ($this->sectionFolders() as $class => $folder) {
+            foreach ($class::cssAssets() as $file)
+                $tags[] = "<link rel=\"stylesheet\" href=\"/sections/$folder/$file\">";
+            foreach ($class::jsAssets() as $file)
+                $tags[] = "<script type=\"module\" src=\"/sections/$folder/$file\"></script>";
+        }
+        return implode("\n    ", $tags);
+    }
+
+    /** Concatenated section markup, in section order. Public for Layout. */
+    function bodyHtml (): string {
+        $body = '';
+        foreach ($this->sections as $section)
+            $body .= $section->render();
+        return $body;
     }
 
     /** @return list<Section> */
@@ -149,24 +153,6 @@ final readonly class Page {
             foreach ($class::cssAssets() as $file)
                 $urls[] = "/sections/$folder/$file";
         return $urls;
-    }
-
-    private function renderAssetTags (): string {
-        $tags = [];
-        foreach ($this->sectionFolders() as $class => $folder) {
-            foreach ($class::cssAssets() as $file)
-                $tags[] = "<link rel=\"stylesheet\" href=\"/sections/$folder/$file\">";
-            foreach ($class::jsAssets() as $file)
-                $tags[] = "<script type=\"module\" src=\"/sections/$folder/$file\"></script>";
-        }
-        return implode("\n    ", $tags);
-    }
-
-    private function renderBody (): string {
-        $body = '';
-        foreach ($this->sections as $section)
-            $body .= $section->render();
-        return $body;
     }
 
 }

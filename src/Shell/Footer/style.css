@@ -1,0 +1,189 @@
+/*
+ * Site footer — values copied verbatim from design/shell-base.html's
+ * final cascade-winning footer rules. Multiple overlapping blocks exist
+ * in that file (it bundles many near-duplicate page mockups); the ones
+ * used here are, in file order, the last one to touch each property:
+ *   - base box: "Spring-style Saiged Footer" (~line 2507)
+ *   - column heading size/spacing: "Footer column alignment and
+ *     compact single-line titles" (~4439)
+ *   - column grid gaps: "Proportional footer columns" (~4751)
+ *   - logo bleed: "Footer Saiged wordmark and text-only social
+ *     section" (~4651) — the LAST of two logo-image blocks
+ *   - newsletter input/consent typography: "Match newsletter
+ *     typography to the rest of the footer" (~4836) — the LAST of two
+ *     newsletter-typography blocks
+ *
+ * Not copied: the source's .contact-footer-columns margin-left offset
+ * and its .contact-footer-brand/-nav/-top rules — those belong to a
+ * different footer variant (one with a left-side brand sidebar) that
+ * our markup doesn't have; copying that offset would just shove our
+ * columns right for no reason.
+ *
+ * .contact-footer-column-items replaces the source's raw <ul>/<li>
+ * since a column can hold link/text/newsletter items interchangeably
+ * — see FooterItem — which a <ul> can't validly mix; it carries the
+ * same a/p typography the source's <ul> children had.
+ */
+.contact-footer {
+    position: relative;
+    overflow: hidden;
+    min-height: clamp(560px, 74vw, 900px);
+    padding: clamp(28px, 3.5vw, 48px) clamp(28px, 4vw, 68px) 0;
+    background: #fff;
+    border-top: 1px solid rgba(17, 17, 17, 0.08);
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.contact-footer-columns {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    column-gap: clamp(22px, 2.4vw, 46px);
+    row-gap: 40px;
+    align-items: start;
+    margin-bottom: clamp(60px, 6vw, 110px);
+}
+
+.contact-footer-column h4 {
+    margin: 0 0 22px;
+    font-family: var(--serif);
+    font-size: clamp(12px, 0.9vw, 16px);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #000;
+    white-space: nowrap;
+}
+
+@media (max-width: 920px) {
+    .contact-footer-column h4 {
+        white-space: normal;
+    }
+}
+
+.contact-footer-column-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.contact-footer-column-items a,
+.contact-footer-column-items p {
+    margin: 0;
+    color: #000;
+    text-decoration: none;
+    font-family: var(--sans);
+    font-size: clamp(13px, 0.95vw, 16px);
+    line-height: 1.12;
+}
+
+.contact-footer-column-items a:hover {
+    opacity: 0.55;
+}
+
+.footer-newsletter-form {
+    margin-top: 20px;
+}
+
+.footer-newsletter-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    border: 0;
+    padding: 0;
+}
+
+.footer-newsletter-row input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: #b7b7b7;
+    font-family: var(--sans);
+    font-size: clamp(13px, 0.95vw, 16px);
+    line-height: 1.12;
+    letter-spacing: 0;
+    font-weight: 400;
+}
+
+.footer-newsletter-row input::placeholder {
+    color: #b7b7b7;
+}
+
+.footer-newsletter-row button {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/*
+ * The logo bleeds off the left/right/bottom edges on purpose — it's a
+ * huge decorative wordmark image, cropped by .contact-footer's own
+ * overflow:hidden, sitting behind the columns (z-index:1 vs 2).
+ */
+.contact-footer-logo {
+    position: absolute;
+    left: clamp(-16px, -1vw, -6px);
+    right: clamp(-30px, -2vw, -12px);
+    bottom: clamp(-95px, -8vw, -48px);
+    z-index: 1;
+    pointer-events: none;
+    user-select: none;
+    overflow: hidden;
+    height: clamp(220px, 34vw, 620px);
+    line-height: 0;
+}
+
+.contact-footer-logo img {
+    display: block;
+    width: clamp(760px, 110vw, 1960px);
+    max-width: none;
+    height: auto;
+    transform: translateX(-1.5%) translateY(1.5%);
+    transform-origin: left bottom;
+}
+
+@media (max-width: 1024px) {
+    .contact-footer {
+        min-height: 720px;
+    }
+
+    .contact-footer-logo {
+        height: clamp(180px, 30vw, 360px);
+        bottom: -52px;
+    }
+
+    .contact-footer-logo img {
+        width: clamp(620px, 122vw, 1320px);
+    }
+}
+
+@media (max-width: 640px) {
+    .contact-footer {
+        padding: 24px 20px 0;
+        min-height: 760px;
+    }
+
+    .contact-footer-columns {
+        grid-template-columns: 1fr;
+        row-gap: 28px;
+    }
+
+    .contact-footer-column h4 {
+        margin-bottom: 12px;
+    }
+
+    .contact-footer-logo {
+        height: clamp(126px, 48vw, 230px);
+        bottom: -22px;
+    }
+}

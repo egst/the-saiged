@@ -11,12 +11,14 @@
         "skipLibCheck":     true,
         "paths": {
             "/js/*":       ["./public/js/*"],
-            "/sections/*": ["./src/Sections/*"]
+            "/sections/*": ["./src/Sections/*"],
+            "/shell/*":    ["./src/Shell/*"]
         }
     },
     "include": [
         "public/js/**/*.js",
         "src/Sections/**/Admin/*.js",
+        "src/Shell/**/Admin/*.js",
         "tests/js/**/*.js"
     ]
 }

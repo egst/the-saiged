@@ -8,6 +8,7 @@ use TheSaiged\Core\Http\Exception\HttpException;
 use TheSaiged\Core\Http\Request;
 use TheSaiged\Core\Http\Response;
 use TheSaiged\Pages\PageService;
+use TheSaiged\Shell\Layout;
 
 final class PublicController {
 
@@ -15,6 +16,7 @@ final class PublicController {
 
     function __construct (
         private PageService $pages,
+        private Layout      $layout,
     ) {}
 
     function page (Request $request): Response {
@@ -25,7 +27,7 @@ final class PublicController {
             return $this->notFound($request);
         if ($request->header('x-partial') === '1')
             return Response::json($page->partial());
-        return Response::html($page->render());
+        return Response::html($this->layout->render($page));
     }
 
     function notFound (Request $request): Response {

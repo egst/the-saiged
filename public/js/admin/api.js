@@ -217,6 +217,37 @@ export default class Api extends EventTarget {
     }
 
     /**
+     * @param {string} type  'header' | 'footer'
+     * @returns {Promise<Record<string, unknown>>}  raw shell data — each
+     *          editor (HeaderShell/FooterShell) validates its own shape
+     */
+    async getShell (type) {
+        const response = await fetch(`/api/admin/shell/${type}`)
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, `Failed to load ${type}`))
+
+        const data = await response.json()
+        if (!isObject(data) || !isObject(data.data))
+            throw new Error('getShell: invalid response shape')
+
+        return data.data
+    }
+
+    /**
+     * @param {string}                  type
+     * @param {Record<string, unknown>} payload
+     */
+    async putShell (type, payload) {
+        const response = await fetch(`/api/admin/shell/${type}`, {
+            method:  'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify(payload),
+        })
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, `Failed to save ${type}`))
+    }
+
+    /**
      * Best-effort extraction of the backend's user-facing error message
      * from a non-2xx Response. Backend errors follow the shape
      * `{error: "<message>"}`; if parsing fails or the shape is wrong, we

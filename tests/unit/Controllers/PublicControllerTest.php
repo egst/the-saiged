@@ -20,12 +20,14 @@ use TheSaiged\Core\Http\Response;
 use TheSaiged\Pages\Page;
 use TheSaiged\Pages\PageService;
 use TheSaiged\Pages\PageStatus;
+use TheSaiged\Shell\Layout;
 use TheSaiged\Tests\TestCase;
 
 /**
  * Unit tests for PublicController — wiring + HTML response shaping.
- * PageService is mocked. The "what counts as public" rule lives in
- * PageService::findPublishedByPath and is tested in PageServiceTest;
+ * PageService and Layout are mocked. The "what counts as public" rule
+ * lives in PageService::findPublishedByPath (tested in PageServiceTest)
+ * and full-document assembly lives in Layout (tested in LayoutTest) —
  * here we only verify the controller dispatches correctly and renders
  * 200 / 404 / 500 with the right body content.
  */
@@ -41,6 +43,7 @@ final class PublicControllerTest extends TestCase {
                     ->with('about')
                     ->willReturn($page)
         );
+        $this->mockLayout(fn ($layout) => $layout->method('render')->with($page)->willReturn('<title>About</title>'));
 
         $response = $this->invoke('page', $this->request('/about'));
 
@@ -72,6 +75,7 @@ final class PublicControllerTest extends TestCase {
                     ->method('findPublishedByPath')
                     ->willReturn($page)
         );
+        $this->mockLayout(fn ($layout) => $layout->method('render')->willReturn('<!DOCTYPE html><title>About</title>'));
 
         $response = $this->invoke('page', $this->request('/about'));
 
@@ -79,6 +83,7 @@ final class PublicControllerTest extends TestCase {
     }
 
     function testPageStillReturns404ForXPartialRequestWhenPageMissing (): void {
+        $this->mockLayout(fn ($layout) => null);
         $this->mockService(
             fn ($service) =>
                 $service
@@ -93,6 +98,7 @@ final class PublicControllerTest extends TestCase {
     }
 
     function testPageStripsLeadingSlashBeforeLookup (): void {
+        $this->mockLayout(fn ($layout) => null);
         $this->mockService(
             fn ($service) =>
                 $service
@@ -109,6 +115,7 @@ final class PublicControllerTest extends TestCase {
     #[TestWith(['/'])]
     #[TestWith(['/missing/nested'])]
     function testPageReturns404WhenServiceReturnsNull (string $path): void {
+        $this->mockLayout(fn ($layout) => null);
         $this->mockService(
             fn ($service) =>
                 $service
@@ -123,9 +130,7 @@ final class PublicControllerTest extends TestCase {
     }
 
     function testNotFoundDirectCallReturnsHtml (): void {
-        $this->mockService(fn ($service) => null);
-
-        $response = (new PublicController($this->createMock(PageService::class)))
+        $response = (new PublicController($this->createMock(PageService::class), $this->createMock(Layout::class)))
             ->notFound($this->request('/anything'));
 
         $this->assertSame(404, $response->status);
@@ -139,7 +144,7 @@ final class PublicControllerTest extends TestCase {
      */
     #[DataProvider('onErrorCases')]
     function testOnErrorMapsExceptionToHtmlResponse (Throwable $thrown, int $expectedStatus, string $expectedBodySubstr): void {
-        $controller = new PublicController($this->createMock(PageService::class));
+        $controller = new PublicController($this->createMock(PageService::class), $this->createMock(Layout::class));
 
         $response = $controller->onError($thrown, $this->request('/anything'));
 
@@ -155,7 +160,7 @@ final class PublicControllerTest extends TestCase {
     }
 
     function testOnErrorDoesNotLeakInternalMessage (): void {
-        $controller = new PublicController($this->createMock(PageService::class));
+        $controller = new PublicController($this->createMock(PageService::class), $this->createMock(Layout::class));
 
         $response = $controller->onError(new RuntimeException('boom-secret'), $this->request('/'));
 
@@ -183,6 +188,20 @@ final class PublicControllerTest extends TestCase {
         $service = $this->createMock(PageService::class);
         $configuration($service);
         Container::set(PageService::class, $service);
+    }
+
+    /**
+     * PublicController now depends on Layout too — Container::get autowires
+     * the whole graph on construction (regardless of whether the test path
+     * actually calls render()), so every test routed through the container
+     * needs this registered, not just the ones asserting on Layout::render.
+     *
+     * @param Closure(MockObject&Layout) $configuration
+     */
+    private function mockLayout (Closure $configuration): void {
+        $layout = $this->createMock(Layout::class);
+        $configuration($layout);
+        Container::set(Layout::class, $layout);
     }
 
     private function invoke (string $method, Request $request): Response {

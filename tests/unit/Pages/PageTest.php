@@ -81,54 +81,47 @@ final class PageTest extends TestCase {
         Page::fromDbRow($row);
     }
 
-    function testRenderProducesHtmlWithTitleAndSection (): void {
+    function testBodyHtmlConcatenatesSectionMarkupInOrder (): void {
         $page = new Page(
             id:       1,
             path:     'p',
-            title:    'My <title>',
+            title:    't',
             metaDesc: null,
             status:   PageStatus::Draft,
             sections: [new ArticleSection(content: 'Hello World')],
         );
 
-        $html = $page->render();
-
-        $this->assertStringContainsString('<!DOCTYPE html>',  $html);
-        $this->assertStringContainsString('My &lt;title&gt;', $html);
-        $this->assertStringContainsString('Hello World',      $html);
-        $this->assertStringContainsString('/css/public/main.css', $html);
+        $this->assertStringContainsString('Hello World', $page->bodyHtml());
     }
 
-    function testRenderIncludesMetaDescriptionWhenSet (): void {
-        $page = new Page(
-            id:       1,
-            path:     'p',
-            title:    't',
-            metaDesc: 'A "quoted" desc & more',
-            status:   PageStatus::Draft,
-            sections: [],
-        );
+    function testMetaDescTagEmptyWhenUnset (): void {
+        $page = new Page(1, 'p', 't', null, PageStatus::Draft, []);
 
-        $html = $page->render();
-
-        $this->assertStringContainsString('name="description"',                          $html);
-        $this->assertStringContainsString('A &quot;quoted&quot; desc &amp; more',        $html);
+        $this->assertSame('', $page->metaDescTag());
     }
 
-    function testRenderIncludesOverlayAssets (): void {
+    function testMetaDescTagEscapesWhenSet (): void {
+        $page = new Page(1, 'p', 't', 'A "quoted" desc & more', PageStatus::Draft, []);
+
+        $tag = $page->metaDescTag();
+
+        $this->assertStringContainsString('name="description"', $tag);
+        $this->assertStringContainsString('A &quot;quoted&quot; desc &amp; more', $tag);
+    }
+
+    function testAssetTagsDeduplicatesCssAndJsAcrossRepeatedSections (): void {
         $page = new Page(
             id:       1,
             path:     'p',
             title:    't',
             metaDesc: null,
             status:   PageStatus::Draft,
-            sections: [],
+            sections: [new ArticleSection(content: 'a'), new ArticleSection(content: 'b')],
         );
 
-        $html = $page->render();
+        $tags = $page->assetTags();
 
-        $this->assertStringContainsString('/css/public/overlay.css',              $html);
-        $this->assertStringContainsString('<script type="module" src="/js/main.js">', $html);
+        $this->assertSame(1, substr_count($tags, '/sections/Article/style.css'));
     }
 
     function testPartialReturnsTitleBodyAndCssLinksWithoutTheFullDocument (): void {

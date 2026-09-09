@@ -1,0 +1,157 @@
+/*
+ * Header/Footer admin views (HeaderShellView, FooterShellView). Header's
+ * link list reuses .sections / .section-edit from section.css verbatim.
+ * The logo picker follows the same add-button/picked-preview interaction
+ * as ImageBreak's .image-break-add / .image-break-picked (carousel-editor.css)
+ * but gets its own box sizing below — a logo is small and shouldn't crop,
+ * unlike ImageBreak's 16:9 hero photo; reusing that box literally upscaled
+ * and blurred the logo. This file covers what's shell-specific: the
+ * labeled sub-section grouping (Logo / Links / Columns headings), the
+ * logo box, the persistent save-status text, and the footer's column/item
+ * grid.
+ */
+
+/*
+ * A labeled sub-section within a .page-editor view (e.g. "Logo", "Links").
+ * Uses the same gap-large as everything else in these views (the gap
+ * between link cards, between column cards, …) so a heading doesn't read
+ * as tucked tightly against its widget while everything below it breathes
+ * — one consistent rhythm throughout, not two different scales.
+ */
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-large);
+}
+
+.field-group-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+/*
+ * Always-present save-status text (never hidden/toggled) so the meta line
+ * doesn't reflow when a field changes — PageEditor's `· unsaved` suffix
+ * only works because it always has a status label before it; the shell
+ * views have nothing else on that line, so a leading "· " would dangle.
+ */
+.shell-save-status {
+    font-style: normal;
+}
+
+.shell-save-status.is-dirty {
+    color: var(--accent);
+    font-weight: 500;
+}
+
+/*
+ * Logo box — same add/picked interaction as .image-break-* but sized for
+ * a small logo instead of a hero photo: modest max-width close to the
+ * actual variant size (no visible upscale blur), object-fit: contain so
+ * the logo is never cropped, and both states share identical dimensions
+ * so picking an image never changes the box size.
+ */
+.shell-logo-add {
+    flex: none;
+    width: 100%;
+    max-width: 14rem;
+    aspect-ratio: 3 / 1;
+    padding: 0;
+    min-height: 0;
+}
+
+.shell-logo-picked {
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 14rem;
+    aspect-ratio: 3 / 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.shell-logo-picked img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: filter 200ms ease;
+}
+
+.shell-logo-picked:hover {
+    outline: 1px dashed var(--accent);
+}
+
+.shell-logo-picked:hover img {
+    filter: blur(6px);
+}
+
+.shell-logo-picked::after {
+    content: 'Change logo';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.65);
+    color: var(--accent);
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+.shell-logo-picked:hover::after {
+    opacity: 1;
+}
+
+/*
+ * Columns are cards in a horizontal strip, same as the image carousel's
+ * .carousel-items: fixed-width cards, the strip scrolls natively rather
+ * than shrinking cards to fit — a column with several items needs its
+ * declared width, not a width that depends on how many columns exist.
+ * .footer-columns reuses .carousel-items itself; .footer-column-edit and
+ * .footer-column-add (the trailing "+ Add column" card) share the fixed
+ * width so the add-button reads as one more column slot, not a stray
+ * control — the same trick .link-carousel-item/.link-carousel-add use.
+ */
+.footer-column-edit,
+.footer-column-add {
+    flex: 0 0 26rem;
+    min-height: 0;
+}
+
+.footer-column-edit .section-edit-header input {
+    flex: 1;
+    min-width: 0;
+}
+
+/*
+ * Items inside a column literally reuse ContactList's editor UI —
+ * .carousel-items--vertical / .carousel-item / .carousel-item-controls —
+ * rather than a bespoke look, so a list of small text items reads the
+ * same everywhere in the admin, not just resembles it. Fields sit at the
+ * top of the card (label/link inputs, or nothing for newsletter items);
+ * .carousel-item-controls at the bottom carries reorder + kind + remove,
+ * same position as ContactList's controls row.
+ */
+.footer-item-kind {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-transform: capitalize;
+}
+
+/*
+ * A native <select>, styled to match .carousel-add's dashed-box look
+ * rather than the browser default — appearance:none strips the platform
+ * chrome, the rest is .carousel-add's own rule set (shared via that class
+ * on the element; this just fixes select-specific quirks).
+ */
+.footer-add-item {
+    appearance: none;
+    -webkit-appearance: none;
+    text-align: center;
+    text-align-last: center;
+}

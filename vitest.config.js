@@ -31,6 +31,8 @@ export default defineConfig({
             // Section admin JS lives next to PHP for namespace symmetry; nginx
             // serves it at /sections/* in the browser, mirror that here.
             '/sections': path.resolve(import.meta.dirname, 'src/Sections'),
+            // Same idea for Shell (Header/Footer) admin JS.
+            '/shell':    path.resolve(import.meta.dirname, 'src/Shell'),
         },
     },
 });

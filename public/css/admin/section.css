@@ -120,8 +120,14 @@
     color: var(--text);
 }
 
-.section-edit:first-child .section-move-up,
-.section-edit:last-child .section-move-down {
+/*
+ * :first-of-type/:last-of-type rather than :first-child/:last-child —
+ * some lists (e.g. the shell Header/Footer editors) append a trailing
+ * "+ Add …" control of a different tag into the same list as these
+ * cards, which would otherwise make :last-child never match a real card.
+ */
+.section-edit:first-of-type .section-move-up,
+.section-edit:last-of-type .section-move-down {
     opacity: 0.3;
     pointer-events: none;
 }

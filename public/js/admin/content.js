@@ -1,8 +1,10 @@
-import {escape}   from '/js/core/escape.js'
-import PageEditor from '/js/admin/content/page-editor.js'
-import CreatePage from '/js/admin/content/create-page.js'
-import CopyPage   from '/js/admin/content/copy-page.js'
-import MediaView  from '/js/admin/content/media-view.js'
+import {escape}         from '/js/core/escape.js'
+import PageEditor       from '/js/admin/content/page-editor.js'
+import CreatePage       from '/js/admin/content/create-page.js'
+import CopyPage         from '/js/admin/content/copy-page.js'
+import MediaView        from '/js/admin/content/media-view.js'
+import HeaderShellView  from '/shell/Header/Admin/header-shell-view.js'
+import FooterShellView  from '/shell/Footer/Admin/footer-shell-view.js'
 
 /**
  * @import Router         from '/js/core/router.js'
@@ -84,6 +86,18 @@ export default class Content {
 
         if (path === '/admin/uploads') {
             const view = new MediaView(this.#api, this.#router, this.#loader, this.#notifier)
+            this.#element.append(view.element)
+            return
+        }
+
+        if (path === '/admin/site/header') {
+            const view = new HeaderShellView(this.#api, this.#loader, this.#notifier)
+            this.#element.append(view.element)
+            return
+        }
+
+        if (path === '/admin/site/footer') {
+            const view = new FooterShellView(this.#api, this.#loader, this.#notifier)
             this.#element.append(view.element)
             return
         }
