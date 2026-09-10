@@ -287,6 +287,77 @@ export default class Api extends EventTarget {
     }
 
     /**
+     * Who (if anyone) is currently logged in. A 401 is the ordinary
+     * "not logged in" case, not a failure — resolves to null instead of
+     * throwing, so callers don't need a try/catch just to show a login
+     * screen.
+     *
+     * @returns {Promise<{email: string, role: string} | null>}
+     */
+    async me () {
+        const response = await fetch('/api/admin/me')
+        if (response.status === 401)
+            return null
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to load current user'))
+
+        const data = await response.json()
+        if (!isObject(data) || typeof data.email !== 'string' || typeof data.role !== 'string')
+            throw new Error('me: invalid response shape')
+        return {email: data.email, role: data.role}
+    }
+
+    async logout () {
+        const response = await fetch('/auth/logout', {method: 'POST'})
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to log out'))
+    }
+
+    /** @returns {Promise<{email: string, role: string}[]>} */
+    async listAdmins () {
+        const response = await fetch('/api/admin/admins')
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to load admins'))
+
+        const data = await response.json()
+        if (!isObject(data) || !Array.isArray(data.admins))
+            throw new Error('listAdmins: invalid response shape')
+        return data.admins
+    }
+
+    /** @param {{email: string, role: string}} payload */
+    async addAdmin (payload) {
+        const response = await fetch('/api/admin/admins', {
+            method:  'POST',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify(payload),
+        })
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to add admin'))
+    }
+
+    /**
+     * @param {string} email
+     * @param {string} role
+     */
+    async updateAdminRole (email, role) {
+        const response = await fetch(`/api/admin/admins/${encodeURIComponent(email)}`, {
+            method:  'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify({role}),
+        })
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to update admin role'))
+    }
+
+    /** @param {string} email */
+    async removeAdmin (email) {
+        const response = await fetch(`/api/admin/admins/${encodeURIComponent(email)}`, {method: 'DELETE'})
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to remove admin'))
+    }
+
+    /**
      * Best-effort extraction of the backend's user-facing error message
      * from a non-2xx Response. Backend errors follow the shape
      * `{error: "<message>"}`; if parsing fails or the shape is wrong, we

@@ -18,6 +18,27 @@
     margin-left: auto;
 }
 
+#topbar-account {
+    color:     var(--muted);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+#topbar-logout {
+    background: transparent;
+    border:     1px solid var(--border);
+    color:      var(--text);
+    font-size:  0.85rem;
+    padding:    0.25rem var(--space-small);
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+#topbar-logout:hover {
+    border-color: var(--accent);
+    color:        var(--accent);
+}
+
 #brand {
     margin: 0;
     font-size: 1rem;

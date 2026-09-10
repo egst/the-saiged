@@ -1,0 +1,50 @@
+/*
+ * Shown instead of the whole admin app (App#run never builds
+ * topbar/sidebar/content) when nobody's logged in. Spans the full
+ * page grid explicitly — body's grid-template-areas assumes
+ * topbar/sidebar/content are all present, which they aren't here.
+ */
+#login-gate {
+    grid-column: 1 / -1;
+    grid-row:    1 / -1;
+    display:         flex;
+    align-items:     center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login-gate-card {
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    gap:     var(--space-medium);
+    padding: var(--space-large);
+    background:   var(--surface);
+    border:       1px solid var(--border);
+    border-radius: 0.5rem;
+    text-align: center;
+}
+
+.login-gate-card h1 {
+    margin:    0;
+    font-size: 1.25rem;
+}
+
+.login-gate-error {
+    margin:    0;
+    color:     var(--danger);
+    font-size: 0.9rem;
+}
+
+.login-gate-signin {
+    padding: var(--space-small) var(--space-medium);
+    background:      var(--accent);
+    color:           #fff;
+    text-decoration: none;
+    border-radius:   0.25rem;
+    font-size:       0.9rem;
+}
+
+.login-gate-signin:hover {
+    background: var(--accent-hover);
+}

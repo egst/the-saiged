@@ -258,3 +258,86 @@ describe('Api uploads', () => {
     })
 
 })
+
+describe('Api admin accounts + auth', () => {
+
+    const sectionFactory = /** @type {any} */ ({})
+
+    beforeEach(() => {
+        vi.restoreAllMocks()
+    })
+
+    /** @param {{ok: boolean, status?: number, body?: unknown}} opts */
+    const fakeResponse = ({ok, status = ok ? 200 : 500, body}) =>
+        /** @type {Response} */ (/** @type {unknown} */ ({
+            ok,
+            status,
+            json: async () => body,
+        }))
+
+    test('me resolves to null on 401 rather than throwing', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue(fakeResponse({ok: false, status: 401, body: {}})))
+
+        const api = new Api(sectionFactory)
+
+        await expect(api.me()).resolves.toBeNull()
+    })
+
+    test('me resolves to the current admin on success', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+            fakeResponse({ok: true, body: {email: 'a@x.com', role: 'admin'}})
+        ))
+
+        const api = new Api(sectionFactory)
+
+        await expect(api.me()).resolves.toEqual({email: 'a@x.com', role: 'admin'})
+    })
+
+    test('me throws (does not swallow) on a non-401 failure', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue(fakeResponse({ok: false, status: 500, body: {}})))
+
+        const api = new Api(sectionFactory)
+
+        await expect(api.me()).rejects.toThrow(/HTTP 500/)
+    })
+
+    test('listAdmins returns the parsed admins list', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+            fakeResponse({ok: true, body: {admins: [{email: 'a@x.com', role: 'editor'}]}})
+        ))
+
+        const api = new Api(sectionFactory)
+
+        await expect(api.listAdmins()).resolves.toEqual([{email: 'a@x.com', role: 'editor'}])
+    })
+
+    test('updateAdminRole/removeAdmin URL-encode the email path segment', async () => {
+        const fetchMock = vi.fn().mockResolvedValue(fakeResponse({ok: true, body: {ok: true}}))
+        vi.stubGlobal('fetch', fetchMock)
+
+        const api = new Api(sectionFactory)
+        await api.updateAdminRole('a+b@x.com', 'admin')
+        await api.removeAdmin('a+b@x.com')
+
+        expect(fetchMock.mock.calls[0][0]).toBe('/api/admin/admins/a%2Bb%40x.com')
+        expect(fetchMock.mock.calls[1][0]).toBe('/api/admin/admins/a%2Bb%40x.com')
+    })
+
+    test('error path applies to every admin/auth endpoint', async () => {
+        const cases = [
+            {method: 'logout',         args: [],                        msg: 'oops logout'},
+            {method: 'listAdmins',     args: [],                        msg: 'oops list'},
+            {method: 'addAdmin',       args: [{email: 'a@x.com', role: 'editor'}], msg: 'oops add'},
+            {method: 'updateAdminRole', args: ['a@x.com', 'admin'],     msg: 'oops role'},
+            {method: 'removeAdmin',    args: ['a@x.com'],               msg: 'oops remove'},
+        ]
+        for (const {method, args, msg} of cases) {
+            vi.stubGlobal('fetch', vi.fn().mockResolvedValue(
+                fakeResponse({ok: false, status: 400, body: {error: msg}})
+            ))
+            const api = /** @type {any} */ (new Api(sectionFactory))
+            await expect(api[method](...args)).rejects.toThrow(msg)
+        }
+    })
+
+})

@@ -61,7 +61,7 @@ final readonly class Route {
             return null;
         $params = [];
         foreach ($matches as $key => $value) if (is_string($key))
-            $params[$key] = $value;
+            $params[$key] = rawurldecode($value);
         return ($this->handler)($request->withPathParams($params));
     }
 

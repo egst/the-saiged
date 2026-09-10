@@ -6,6 +6,7 @@ use DI\Container as DIContainer;
 use DI\ContainerBuilder;
 use PDO;
 use RuntimeException;
+use TheSaiged\Auth\GoogleOAuthClient;
 use TheSaiged\Core\Database\PdoFactory;
 
 final class Container {
@@ -41,7 +42,8 @@ final class Container {
     /** @return array<string, mixed> */
     private static function definitions (): array {
         return [
-            PDO::class => fn () => PdoFactory::create(),
+            PDO::class               => fn () => PdoFactory::create(),
+            GoogleOAuthClient::class => fn () => GoogleOAuthClient::fromEnv(),
         ];
     }
 

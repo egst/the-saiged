@@ -11,14 +11,19 @@
 }
 
 #content input,
-#content textarea {
-    width: 100%;
+#content textarea,
+#content select {
     background: var(--bg);
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: var(--space-small) var(--space-medium);
     font: inherit;
+}
+
+#content input,
+#content textarea {
+    width: 100%;
 }
 
 #content textarea {

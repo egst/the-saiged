@@ -6,6 +6,7 @@ import MediaView        from '/js/admin/content/media-view.js'
 import HeaderShellView  from '/shell/Header/Admin/header-shell-view.js'
 import FooterShellView  from '/shell/Footer/Admin/footer-shell-view.js'
 import TypographyView   from '/typography/Admin/typography-view.js'
+import UsersView        from '/js/admin/content/users-view.js'
 
 /**
  * @import Router         from '/js/core/router.js'
@@ -34,6 +35,8 @@ export default class Content {
     #loader
     /** @type {Notifier} */
     #notifier
+    /** @type {string} */
+    #role
 
     /**
      * @param {Router}         router
@@ -41,13 +44,15 @@ export default class Content {
      * @param {SectionFactory} sectionFactory
      * @param {Loader}         loader
      * @param {Notifier}       notifier
+     * @param {string}         role   current admin's role — 'editor' | 'admin'
      */
-    constructor (router, api, sectionFactory, loader, notifier) {
+    constructor (router, api, sectionFactory, loader, notifier, role) {
         this.#router         = router
         this.#api            = api
         this.#sectionFactory = sectionFactory
         this.#loader         = loader
         this.#notifier       = notifier
+        this.#role           = role
         this.#element        = document.createElement('main')
         this.#element.id     = 'content'
 
@@ -105,6 +110,20 @@ export default class Content {
 
         if (path === '/admin/site/typography') {
             const view = new TypographyView(this.#api, this.#loader, this.#notifier)
+            this.#element.append(view.element)
+            return
+        }
+
+        if (path === '/admin/site/users') {
+            // Frontend half of the guard — the real enforcement is
+            // AdminGuard::admin on every /api/admin/admins/* route, this
+            // just keeps a non-admin from seeing the screen at all if
+            // they type/bookmark the URL directly.
+            if (this.#role !== 'admin') {
+                this.#element.append(this.#error('You do not have access to this page.'))
+                return
+            }
+            const view = new UsersView(this.#api, this.#loader, this.#notifier)
             this.#element.append(view.element)
             return
         }

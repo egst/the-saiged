@@ -18,7 +18,8 @@ import PageTree from '/js/admin/sidebar/page-tree.js'
  *   [ page tree (dirs + page leaves) ]
  *
  * The top "static" section holds admin views that aren't backed by the
- * dynamic Pages list — Uploads, Header, Footer, Typography.
+ * dynamic Pages list — Uploads, Header, Footer, Typography, and (Admin
+ * role only) Users.
  * They look like tree leaves visually (same paddings + hover + active
  * styling) but without the indicator dot, since they're not Pages.
  *
@@ -48,8 +49,9 @@ export default class Sidebar {
      * @param {Api}      api
      * @param {Loader}   loader
      * @param {Notifier} notifier
+     * @param {string}   role   current admin's role — 'editor' | 'admin'
      */
-    constructor (router, api, loader, notifier) {
+    constructor (router, api, loader, notifier, role) {
         this.#router   = router
         this.#api      = api
         this.#loader   = loader
@@ -66,6 +68,8 @@ export default class Sidebar {
             this.#staticLink('/admin/site/footer',     'Footer'),
             this.#staticLink('/admin/site/typography', 'Typography'),
         )
+        if (role === 'admin')
+            staticSection.append(this.#staticLink('/admin/site/users', 'Users'))
 
         const divider = document.createElement('hr')
         divider.className = 'sidebar-divider'

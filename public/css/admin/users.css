@@ -1,0 +1,26 @@
+/*
+ * Users view (UsersView) — admin-account list + add row. Reuses
+ * .sections / .section-edit (section.css) for the card list and
+ * .page-actions (page-editor.css) for the "+ Add admin" button's
+ * default/primary treatment, same as every other admin view; this file
+ * only adds .admin-row, since .section-edit-header (a small muted
+ * 0.85rem meta strip meant for a drag-handle/type-label row) isn't the
+ * right fit for a row that holds a real email + role control.
+ */
+.admin-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-medium);
+}
+
+.admin-row-email {
+    flex: 1;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.admin-row input {
+    flex: 1;
+}

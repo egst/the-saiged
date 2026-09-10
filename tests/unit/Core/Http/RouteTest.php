@@ -64,4 +64,20 @@ final class RouteTest extends TestCase {
         $this->assertSame('42', $route->try($request)?->body);
     }
 
+    /**
+     * A path segment carrying reserved characters (e.g. an email used as
+     * an id — see /api/admin/admins/{email}) arrives percent-encoded on
+     * the wire; the captured param must come back decoded, or a lookup
+     * by the decoded value (e.g. AdminRepository::findByEmail) silently
+     * misses.
+     */
+    function testCapturedParamIsUrlDecoded (): void {
+        $route = Route::get('/users/{email}', fn (Request $r) => Response::text(
+            $r->path->get('email') ?? '',
+        ));
+        $request = new Request(Method::GET, new Path('/users/a%40x.com'), new Query());
+
+        $this->assertSame('a@x.com', $route->try($request)?->body);
+    }
+
 }
