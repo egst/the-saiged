@@ -51,6 +51,7 @@ export default class UsersView {
 
         this.#emailInput             = document.createElement('input')
         this.#emailInput.type        = 'email'
+        this.#emailInput.className   = 'control-row-input'
         this.#emailInput.placeholder = 'name@example.com'
 
         this.#roleSelect = document.createElement('select')
@@ -107,7 +108,7 @@ export default class UsersView {
         actions.append(addButton)
 
         const row = document.createElement('div')
-        row.className = 'admin-row'
+        row.className = 'control-row'
         row.append(this.#emailInput, this.#roleSelect, actions)
 
         const card = document.createElement('div')
@@ -142,10 +143,10 @@ export default class UsersView {
         card.className = 'section-edit'
 
         const row = document.createElement('div')
-        row.className = 'admin-row'
+        row.className = 'control-row'
 
         const label = document.createElement('span')
-        label.className   = 'admin-row-email'
+        label.className   = 'control-row-label'
         label.textContent = admin.email
 
         const roleSelect = document.createElement('select')

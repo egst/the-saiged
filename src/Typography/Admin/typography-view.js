@@ -45,6 +45,8 @@ export default class TypographyView {
     #element
     /** @type {Record<string, HTMLDivElement>} */
     #lists = {}
+    /** @type {Record<string, HTMLButtonElement>} */
+    #addButtons = {}
 
     /**
      * @param {Api}      api
@@ -95,18 +97,24 @@ export default class TypographyView {
         list.className = 'sections'
         this.#lists[role] = list
 
+        // Lives as the last child of `list` itself (see #renderFaces),
+        // not a sibling after it — same shape as Header/Footer's own
+        // link/column lists, so cards, the empty-state message, and the
+        // add button all share one gap-large rhythm instead of two
+        // nested ones.
         const addButton = document.createElement('button')
         addButton.type        = 'button'
         addButton.className   = 'add-section'
         addButton.textContent = '+ Add face'
         addButton.addEventListener('click', () => this.#addFace(role))
+        this.#addButtons[role] = addButton
 
         const group = document.createElement('div')
         group.className = 'field-group'
         const heading = document.createElement('h3')
         heading.className   = 'field-group-title'
         heading.textContent = label
-        group.append(heading, list, addButton)
+        group.append(heading, list)
         return group
     }
 
@@ -136,10 +144,11 @@ export default class TypographyView {
             empty.className   = 'placeholder'
             empty.textContent = 'No custom faces — using the default font.'
             list.append(empty)
-            return
+        } else {
+            for (const face of faces)
+                list.append(this.#renderFace(face))
         }
-        for (const face of faces)
-            list.append(this.#renderFace(face))
+        list.append(this.#addButtons[role])
     }
 
     /** @param {Face} face */
@@ -148,7 +157,7 @@ export default class TypographyView {
         card.className = 'section-edit'
 
         const row = document.createElement('div')
-        row.className = 'section-edit-header'
+        row.className = 'control-row'
 
         const filename = isObject(face.upload) && typeof face.upload.filename === 'string'
             ? face.upload.filename
@@ -158,7 +167,7 @@ export default class TypographyView {
             : `${face.weightMin}–${face.weightMax}`
 
         const label = document.createElement('span')
-        label.style.flex   = '1'
+        label.className    = 'control-row-label'
         label.textContent  = `${filename} — weight ${weight}, ${face.style}`
 
         const removeButton = document.createElement('button')
@@ -180,7 +189,7 @@ export default class TypographyView {
             return
 
         const list = this.#lists[role]
-        list.append(this.#renderPendingFace(role, upload))
+        list.insertBefore(this.#renderPendingFace(role, upload), this.#addButtons[role])
     }
 
     /**
@@ -192,30 +201,29 @@ export default class TypographyView {
         card.className = 'section-edit'
 
         const row = document.createElement('div')
-        row.className = 'section-edit-header'
+        row.className = 'control-row'
 
         const label = document.createElement('span')
-        label.style.flex  = '1'
+        label.className   = 'control-row-label'
         label.textContent = upload.filename
 
         const minInput = document.createElement('input')
         minInput.type        = 'number'
+        minInput.className   = 'weight-input'
         minInput.min         = '1'
         minInput.max         = '1000'
         minInput.value       = '400'
         minInput.title       = 'Weight from'
-        minInput.style.width = '4.5rem'
 
         const maxInput = document.createElement('input')
         maxInput.type        = 'number'
+        maxInput.className   = 'weight-input'
         maxInput.min         = '1'
         maxInput.max         = '1000'
         maxInput.value       = '400'
         maxInput.title       = 'Weight to'
-        maxInput.style.width = '4.5rem'
 
         const styleSelect = document.createElement('select')
-        styleSelect.className = 'footer-add-item'
         for (const value of ['normal', 'italic']) {
             const option = document.createElement('option')
             option.value       = value
@@ -239,7 +247,11 @@ export default class TypographyView {
         cancelButton.textContent = 'Cancel'
         cancelButton.addEventListener('click', () => card.remove())
 
-        row.append(label, minInput, maxInput, styleSelect, confirmButton, cancelButton)
+        const actions = document.createElement('div')
+        actions.className = 'page-actions'
+        actions.append(confirmButton, cancelButton)
+
+        row.append(label, minInput, maxInput, styleSelect, actions)
         card.append(row)
         return card
     }
