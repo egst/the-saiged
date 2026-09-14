@@ -13,9 +13,21 @@
     letter-spacing: -0.04em;
 }
 
+/*
+ * min(280px, 100%) rather than a bare 280px — same class of bug as the
+ * footer's fixed-px column minimums: on a viewport narrower than
+ * 280px + this section's own padding, a hard 280px floor doesn't
+ * shrink any further and overflows to the right (its text included,
+ * since the column itself is wider than the screen). min(...) caps the
+ * floor at the container's own available width once that drops below
+ * 280px, so a single column can never be wider than its own container
+ * — no breakpoint/threshold math needed, unlike the footer's grid
+ * (which needed one because it switches column *count*, not just
+ * sizing, at fixed points).
+ */
 .three-column-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
     gap: 48px;
 }
 

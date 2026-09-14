@@ -31,7 +31,19 @@
  * same a/p typography the source's <ul> children had.
  */
 .contact-footer {
-    padding: clamp(28px, 3.5vw, 48px) clamp(28px, 4vw, 68px) 0;
+    /*
+     * Single source of truth for the footer's horizontal padding —
+     * .contact-footer-logo's negative margins (below) cancel it out for
+     * its own full-bleed effect and MUST always match exactly, or the
+     * logo box ends up wider than its container and overflows. Read
+     * from a custom property (redefined below at the 720px breakpoint,
+     * where the padding switches to a flat 20px) rather than duplicating
+     * the clamp() expression in both places, which is what actually
+     * broke this the first time — the margin still said clamp(...) after
+     * the padding itself had already switched to a fixed value.
+     */
+    --footer-pad-x: clamp(28px, 4vw, 68px);
+    padding: clamp(28px, 3.5vw, 48px) var(--footer-pad-x) 0;
     background: #fff;
     border-top: 1px solid rgba(17, 17, 17, 0.08);
     color: #000;
@@ -51,7 +63,40 @@
     align-items: start;
 }
 
-@media (max-width: 1180px) {
+/*
+ * The admin can configure any number of columns — this grid only ever
+ * defines up to 6 (or 3, or 1, per breakpoint below) tracks. The last
+ * column is always double-width (spans 2 tracks) so it doesn't read as
+ * a narrow leftover — UNLESS it's already exactly the row's final
+ * track (:nth-child(6n) here, :nth-child(3n) at the tablet breakpoint
+ * below), in which case the row is already full and spanning would
+ * just force it onto a new row by itself.
+ *
+ * Each breakpoint gets its own explicitly-scoped (min-width AND
+ * max-width) rule rather than one unconditioned rule cascading down —
+ * a rule written against 6-per-row math must not still be "on" once
+ * the grid has switched to 3 (or 1) tracks; a plain :last-child
+ * without the width bounds doesn't know which math applies. Tried
+ * `grid-column-end: -1` first (pin the end line, leave the start
+ * auto) expecting it to span "however much space is left" — it
+ * doesn't: an item with a definite end but no explicit span defaults
+ * to span 1, so that just force-placed the last column onto the final
+ * track alone, leaving a gap where it used to sit right after its
+ * neighbor.
+ */
+@media (min-width: 1241px) {
+    .contact-footer-column:last-child:not(:nth-child(6n)) {
+        grid-column: span 2;
+    }
+}
+
+@media (min-width: 721px) and (max-width: 1240px) {
+    .contact-footer-column:last-child:not(:nth-child(3n)) {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 1240px) {
     .contact-footer-columns {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -59,7 +104,11 @@
 
 @media (max-width: 720px) {
     .contact-footer {
-        padding: 24px 20px 40px;
+        --footer-pad-x: 20px;
+        /* padding-bottom stays 0 — see the desktop rule and
+           .contact-footer-logo below: the logo is the last child and
+           should sit flush against the bottom edge at every width. */
+        padding: 24px var(--footer-pad-x) 0;
     }
 
     .contact-footer-columns {
@@ -214,31 +263,32 @@
  * Simplified deliberately (see file header) — full-bleed block below
  * the columns, edge to edge with the viewport regardless of
  * .contact-footer's own left/right padding (negative margins matching
- * that exact padding expression cancel it out — same trick as before,
- * just precise instead of 100vw, which can overshoot by a scrollbar's
- * width).
+ * that exact padding cancel it out). Reads --footer-pad-x rather than
+ * repeating .contact-footer's own padding expression, so the two can't
+ * drift apart the way they once did.
  *
- * aspect-ratio instead of a fixed height: a constant px height stopped
- * making sense once the box's own width shrinks with the viewport (it'd
- * crop more and more aggressively, or barely crop at all, depending on
- * how far off it was from the current width). aspect-ratio keeps the
- * crop proportion constant instead — 1920/620 means "show the top ~81%
- * of the logo's own height", at any width. overflow:hidden on this box
- * contains the crop; the <img> is width:100%/height:auto, so it's never
- * cropped left/right, only top-anchored and clipped at the bottom once
- * it's taller than the box.
+ * aspect-ratio deliberately shorter than the image's own real ratio
+ * (1920/764) — the box is intentionally cropped, showing only the top
+ * ~81% of the logo's height, with overflow:hidden clipping the rest;
+ * the <img> itself is width:100%/height:auto so it's never cropped
+ * left/right, only top-anchored and cut off at the bottom once it's
+ * taller than the box. This isn't what was actually causing the
+ * earlier "gap" reports — those were --footer-pad-x drifting from the
+ * real padding, and a leftover padding-bottom:40px on the mobile
+ * breakpoint (both fixed above/below this rule) — so the crop itself
+ * is safe to keep.
  *
- * .contact-footer itself has zero bottom padding on purpose — this
- * logo block is the last thing in the footer and should sit flush
- * against its bottom edge, not leave a padding gap below it.
+ * .contact-footer has zero bottom padding and this is its last child,
+ * so the box (not necessarily the image, which now overflows past its
+ * bottom on purpose) sits flush against the footer's own bottom edge.
  *
  * margin-top is a fixed px, not a clamp/vw value, so the gap between
  * the columns and the logo never changes on resize.
  */
 .contact-footer-logo {
     margin-top: 64px;
-    margin-left: calc(clamp(28px, 4vw, 68px) * -1);
-    margin-right: calc(clamp(28px, 4vw, 68px) * -1);
+    margin-left: calc(var(--footer-pad-x) * -1);
+    margin-right: calc(var(--footer-pad-x) * -1);
     aspect-ratio: 1920 / 620;
     overflow: hidden;
 }

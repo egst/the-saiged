@@ -1,8 +1,14 @@
 /*
  * Two-column section — heading left, paragraph + optional CTA right.
- * Collapses to a single column under 860px. Type scale and spacing
+ * Collapses to a single column under 900px. Type scale and spacing
  * mirror the client design's .intro-section. Font and color tokens come
  * from the global public stylesheet (css/public/main.css).
+ *
+ * The two 360px column floors + gap + padding actually need ~868px of
+ * viewport width to fit without overflowing — same bug class as the
+ * footer's column grid (a breakpoint set narrower than what the grid's
+ * own hardcoded minimums require). 900px instead of the original 860px
+ * to clear that with a bit of margin.
  */
 .two-column {
     display: grid;
@@ -53,7 +59,7 @@
     opacity: 0.82;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 900px) {
     .two-column {
         grid-template-columns: 1fr;
         gap: 34px;
