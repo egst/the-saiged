@@ -15,8 +15,8 @@ const ROLES = [
  * role; the real enforcement is server-side, AdminGuard::admin on every
  * /api/admin/admins/* route).
  *
- * Acts immediately on add/change-role/remove (follows MediaView's shape,
- * same as TypographyView) — there's no draft state worth tracking.
+ * Acts immediately on add/change-role/remove (follows MediaView's
+ * shape) — there's no draft state worth tracking.
  */
 export default class UsersView {
 

@@ -25,7 +25,7 @@ export default class UploadPicker {
     /**
      * Open the picker and return the chosen upload, or null if canceled.
      *
-     * @param {string} kind 'image' | 'video' | 'font'
+     * @param {string} kind 'image' | 'video'
      * @returns {Promise<Upload | null>}
      */
     async open (kind = 'image') {

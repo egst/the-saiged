@@ -24,13 +24,6 @@ final readonly class UploadService {
         'image/webp' => UploadKind::Image,
         'video/mp4'  => UploadKind::Video,
         'video/webm' => UploadKind::Video,
-        // Verified against this project's PHP 8.4 fileinfo build:
-        // OTF (CFF outlines) → vnd.ms-opentype, TTF (glyf outlines) →
-        // font/sfnt, WOFF/WOFF2 → font/woff(2).
-        'application/vnd.ms-opentype' => UploadKind::Font,
-        'font/sfnt'                   => UploadKind::Font,
-        'font/woff'                   => UploadKind::Font,
-        'font/woff2'                  => UploadKind::Font,
     ];
 
     function __construct (

@@ -54,14 +54,13 @@ final readonly class Upload {
     /**
      * Public URL of the original file. Routed through nginx's whitelist alias
      * at /uploads/... → data/uploads/... — mirrors UploadStorage's on-disk
-     * layout per kind (images under images/{id}/, fonts flat under fonts/,
-     * everything else flat under {id}/).
+     * layout per kind (images under images/{id}/, everything else flat
+     * under {id}/).
      */
     function originalUrl (): string {
         $ext = $this->extension();
         return match ($this->kind) {
             UploadKind::Image => "/uploads/images/{$this->id}/original.$ext",
-            UploadKind::Font  => "/uploads/fonts/{$this->id}.$ext",
             default           => "/uploads/{$this->id}/original.$ext",
         };
     }

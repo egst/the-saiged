@@ -10,7 +10,6 @@ use TheSaiged\Controllers\AuthController;
 use TheSaiged\Controllers\MediaController;
 use TheSaiged\Controllers\PublicController;
 use TheSaiged\Controllers\ShellController;
-use TheSaiged\Controllers\TypographyController;
 use TheSaiged\Core\Singleton;
 use TheSaiged\Core\Http\Request;
 use TheSaiged\Core\Http\Route;
@@ -72,9 +71,6 @@ final class Entry {
             Route::post   ('/api/admin/uploads/{id}/variants', AdminGuard::any(MediaController  ::handler('ensureVariant'))),
             Route::get    ('/api/admin/shell/{type}',          AdminGuard::any(ShellController  ::handler('get'))),
             Route::put    ('/api/admin/shell/{type}',          AdminGuard::any(ShellController  ::handler('put'))),
-            Route::get    ('/api/admin/typography',              AdminGuard::any(TypographyController ::handler('get'))),
-            Route::post   ('/api/admin/typography/{role}/faces', AdminGuard::any(TypographyController ::handler('addFace'))),
-            Route::delete ('/api/admin/typography/faces/{id}',   AdminGuard::any(TypographyController ::handler('removeFace'))),
             Route::any    ('/api/*',                           AdminController  ::handler('notFound')),
             Route::any    ('/*',                               PublicController ::handler('page')),
         ];

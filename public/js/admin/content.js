@@ -5,7 +5,6 @@ import CopyPage         from '/js/admin/content/copy-page.js'
 import MediaView        from '/js/admin/content/media-view.js'
 import HeaderShellView  from '/shell/Header/Admin/header-shell-view.js'
 import FooterShellView  from '/shell/Footer/Admin/footer-shell-view.js'
-import TypographyView   from '/typography/Admin/typography-view.js'
 import UsersView        from '/js/admin/content/users-view.js'
 
 /**
@@ -104,12 +103,6 @@ export default class Content {
 
         if (path === '/admin/site/footer') {
             const view = new FooterShellView(this.#api, this.#loader, this.#notifier)
-            this.#element.append(view.element)
-            return
-        }
-
-        if (path === '/admin/site/typography') {
-            const view = new TypographyView(this.#api, this.#loader, this.#notifier)
             this.#element.append(view.element)
             return
         }

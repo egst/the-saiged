@@ -47,10 +47,6 @@ final class UploadServiceTest extends TestCase {
     #[TestWith(['image/webp', 'image'])]
     #[TestWith(['video/mp4',  'video'])]
     #[TestWith(['video/webm', 'video'])]
-    #[TestWith(['application/vnd.ms-opentype', 'font'])]
-    #[TestWith(['font/sfnt',                    'font'])]
-    #[TestWith(['font/woff',                     'font'])]
-    #[TestWith(['font/woff2',                    'font'])]
     function testCreateMapsMimeToKind (string $mime, string $expectedKindValue): void {
         $upload = $this->fixtureUpload(mime: $mime, kind: UploadKind::from($expectedKindValue));
         $this->mock(

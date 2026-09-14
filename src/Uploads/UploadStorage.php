@@ -9,7 +9,6 @@ use TheSaiged\Core\Env;
  * Filesystem layer for uploads. On-disk layout depends on kind — see
  * originalPath():
  *   images: data/uploads/images/{id}/original.{ext} (+ variant siblings)
- *   fonts:  data/uploads/fonts/{id}.{ext}            (never has siblings)
  *   other:  data/uploads/{id}/original.{ext}
  *
  * The base directory is configurable via UPLOADS_DIR env var (tests
@@ -69,19 +68,11 @@ final readonly class UploadStorage {
     /**
      * Delete everything on disk for an upload. Called by MediaController on
      * DELETE — the DB row is removed by the repository, this just nukes the
-     * on-disk part. Images/other kinds live in their own per-id dir (safe to
-     * remove wholesale); fonts are a single flat file among siblings, so
-     * only that one file is unlinked.
+     * on-disk part. Each kind lives in its own per-id dir, safe to remove
+     * wholesale.
      */
     function deleteAll (Upload $upload): void {
-        $target = $this->originalPath($upload);
-
-        if ($upload->kind === UploadKind::Font) {
-            @unlink($target);
-            return;
-        }
-
-        $dir = dirname($target);
+        $dir = dirname($this->originalPath($upload));
         if (!is_dir($dir))
             return;
         $this->deleteRecursive($dir);
@@ -92,7 +83,6 @@ final readonly class UploadStorage {
         $ext = $upload->extension();
         return match ($upload->kind) {
             UploadKind::Image => "{$this->root}/images/$id/original.$ext",
-            UploadKind::Font  => "{$this->root}/fonts/$id.$ext",
             default           => "{$this->root}/$id/original.$ext",
         };
     }

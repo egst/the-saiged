@@ -5,10 +5,10 @@ import Logger                                   from '/js/core/logger.js'
 import Notifier                                 from '/js/admin/notifier.js'
 
 /**
- * UsersView mirrors TypographyView's shape (self-loads, acts immediately
- * on add/remove) — same things worth pinning: API calls, DOM effects,
- * notifier behavior. The Admin-only visibility gate itself lives in
- * Content (this view has no opinion on who's allowed to see it).
+ * UsersView self-loads and acts immediately on add/remove — same things
+ * worth pinning: API calls, DOM effects, notifier behavior. The
+ * Admin-only visibility gate itself lives in Content (this view has no
+ * opinion on who's allowed to see it).
  */
 describe('UsersView', () => {
 

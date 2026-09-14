@@ -33,11 +33,11 @@
 
 /*
  * Native number-input spin buttons are sized for a plain, wide input —
- * inside a compact field (e.g. Typography's weight-range inputs) they
- * overlap the digits instead of sitting clear of them. Stripped
- * everywhere in the admin rather than per-view, since a cramped number
- * field is the same problem regardless of which view it's in; typing
- * and arrow-key stepping both still work without the visible glyphs.
+ * inside a compact field they overlap the digits instead of sitting
+ * clear of them. Stripped everywhere in the admin rather than per-view,
+ * since a cramped number field is the same problem regardless of which
+ * view it's in; typing and arrow-key stepping both still work without
+ * the visible glyphs.
  */
 #content input[type="number"] {
     appearance: textfield;
@@ -67,10 +67,10 @@
  * A single-line row of controls — a flexible label/input on the left,
  * fixed-width controls (select, buttons) on the right. Used by any view
  * whose "list of things" needs a compact row instead of a vertical
- * label-stack (.page-meta-body's shape). Deliberately generic: Users and
- * Typography both need this exact shape, and .section-edit-header (a
- * small muted 0.85rem meta strip meant for a drag-handle/type-label row)
- * isn't the right fit for a row holding real controls.
+ * label-stack (.page-meta-body's shape). Deliberately generic rather
+ * than Users-specific, and .section-edit-header (a small muted 0.85rem
+ * meta strip meant for a drag-handle/type-label row) isn't the right
+ * fit for a row holding real controls.
  */
 .control-row {
     display: flex;

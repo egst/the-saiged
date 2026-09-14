@@ -32,9 +32,7 @@ export default defineConfig({
             // serves it at /sections/* in the browser, mirror that here.
             '/sections': path.resolve(import.meta.dirname, 'src/Sections'),
             // Same idea for Shell (Header/Footer) admin JS.
-            '/shell':      path.resolve(import.meta.dirname, 'src/Shell'),
-            // Same idea for Typography (custom font faces) admin JS.
-            '/typography': path.resolve(import.meta.dirname, 'src/Typography'),
+            '/shell': path.resolve(import.meta.dirname, 'src/Shell'),
         },
     },
 });
