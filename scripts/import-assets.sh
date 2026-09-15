@@ -22,4 +22,10 @@ echo "==> Clearing existing uploads volume contents"
 echo "==> Extracting $FILE into the uploads volume"
 "${COMPOSE[@]}" exec -T php sh -c 'tar xzf - -C /var/www/the-saiged/data/uploads' < "$FILE"
 
+# tar's archived "." entry can carry the source directory's own mode onto
+# the mount root — nginx (running as its own user, not the file owner)
+# then can't even traverse into it, no matter what the contents look like.
+echo "==> Normalizing uploads volume root permission"
+"${COMPOSE[@]}" exec -T php sh -c 'chmod 755 /var/www/the-saiged/data/uploads'
+
 echo "==> Done"

@@ -42,6 +42,15 @@ final readonly class UploadStorage {
             @unlink($sourcePath);
         }
 
+        // rename() preserves the source file's mode exactly, and PHP's own
+        // upload tmp files are typically created 0600 (owner-only) — fine
+        // for a temp file, wrong for a permanently publicly-served asset.
+        // nginx's worker process runs as a different user than PHP's, so
+        // this silently 403'd every original file in production while
+        // looking fine locally (Docker Desktop's bind-mount UID mapping
+        // masks the same 0600 permission there).
+        @chmod($target, 0644);
+
         if ($upload->kind !== UploadKind::Image)
             return [null, null];
 
