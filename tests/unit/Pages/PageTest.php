@@ -28,6 +28,31 @@ final class PageTest extends TestCase {
         $this->assertSame([],                $page->sections);
     }
 
+    function testFromDbRowDefaultsSearchableToTrueWhenColumnAbsent (): void {
+        $page = Page::fromDbRow([
+            'id' => 1, 'path' => 'p', 'title' => 't', 'status' => 'draft', 'content' => null,
+        ]);
+
+        $this->assertTrue($page->searchable);
+    }
+
+    #[TestWith([1, true])]
+    #[TestWith([0, false])]
+    function testFromDbRowReadsSearchableAsBool (int $raw, bool $expected): void {
+        $page = Page::fromDbRow([
+            'id' => 1, 'path' => 'p', 'title' => 't', 'status' => 'draft', 'content' => null,
+            'searchable' => $raw,
+        ]);
+
+        $this->assertSame($expected, $page->searchable);
+    }
+
+    function testToArrayIncludesSearchable (): void {
+        $page = new Page(1, 'p', 't', null, PageStatus::Draft, [], searchable: false);
+
+        $this->assertFalse($page->toArray()['searchable']);
+    }
+
     function testFromDbRowReadsMetaDesc (): void {
         $page = Page::fromDbRow([
             'id'        => 1,

@@ -33,12 +33,13 @@ describe('PageEditor dirty tracking', () => {
         document.body.replaceChildren()
 
         page = new Page(
-            /* id        */ 7,
-            /* path      */ 'about',
-            /* title     */ 'About',
-            /* metaDesc  */ null,
-            /* status    */ 'draft',
-            /* sections  */ [new ArticleSection('Content')],
+            /* id         */ 7,
+            /* path       */ 'about',
+            /* title      */ 'About',
+            /* metaDesc   */ null,
+            /* status     */ 'draft',
+            /* sections   */ [new ArticleSection('Content')],
+            /* searchable */ true,
         )
 
         api    = {
@@ -111,6 +112,32 @@ describe('PageEditor dirty tracking', () => {
         titleInput.value = 'About'
         titleInput.dispatchEvent(new Event('input', {bubbles: true}))
         expect(dirtyLabel(editor.element).hidden).toBe(true)
+    })
+
+    test('toggling the searchable checkbox marks dirty and updates the page', () => {
+        const editor = newEditor()
+
+        const searchableInput = /** @type {HTMLInputElement} */ (editor.element.querySelector('input[name=searchable]'))
+        expect(searchableInput.checked).toBe(true)
+
+        searchableInput.checked = false
+        searchableInput.dispatchEvent(new Event('change', {bubbles: true}))
+
+        expect(page.searchable                                         ).toBe(false)
+        expect(saveButton(editor.element).classList.contains('primary')).toBe(true)
+    })
+
+    test('save sends the current searchable value to the API', async () => {
+        const editor = newEditor()
+
+        const searchableInput = /** @type {HTMLInputElement} */ (editor.element.querySelector('input[name=searchable]'))
+        searchableInput.checked = false
+        searchableInput.dispatchEvent(new Event('change', {bubbles: true}))
+
+        saveButton(editor.element).click()
+        await vi.waitFor(() => expect(api.putPage).toHaveBeenCalled())
+
+        expect(api.putPage).toHaveBeenCalledWith(7, expect.objectContaining({searchable: false}))
     })
 
     test('after a successful save, dirty clears and snapshot resets', async () => {
@@ -193,7 +220,7 @@ describe('PageEditor add-section menu', () => {
     beforeEach(() => {
         document.body.replaceChildren()
 
-        page = new Page(7, 'about', 'About', null, 'draft', [new ArticleSection('Content')])
+        page = new Page(7, 'about', 'About', null, 'draft', [new ArticleSection('Content')], true)
 
         api = {
             putPage:      vi.fn().mockResolvedValue(undefined),

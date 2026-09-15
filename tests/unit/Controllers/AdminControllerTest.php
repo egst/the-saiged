@@ -176,7 +176,7 @@ final class AdminControllerTest extends TestCase {
         );
 
         $response = $this->invoke('updatePage', $this->request(
-            ['title' => 'X', 'status' => 'draft', 'sections' => []],
+            ['title' => 'X', 'status' => 'draft', 'sections' => [], 'searchable' => true],
             '9999',
         ));
 
@@ -199,7 +199,7 @@ final class AdminControllerTest extends TestCase {
         );
 
         $response = $this->invoke('updatePage', $this->request(
-            ['title' => 'X', 'metaDesc' => null, 'status' => 'published', 'sections' => []],
+            ['title' => 'X', 'metaDesc' => null, 'status' => 'published', 'sections' => [], 'searchable' => true],
             '7',
         ));
 

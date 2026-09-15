@@ -5,6 +5,7 @@ namespace TheSaiged\Tests\Integration\Pages;
 use PDO;
 use RuntimeException;
 use TheSaiged\Core\Container;
+use TheSaiged\Core\Database\Database;
 use TheSaiged\Pages\DuplicatePathException;
 use TheSaiged\Pages\Page;
 use TheSaiged\Pages\PageRepository;
@@ -49,11 +50,12 @@ final class PageRepositoryIntegrationTest extends TestCase {
     function testInsertWithFullDataPersistsAllFields (): void {
         $repo = Container::get(PageRepository::class);
         $id   = $repo->insert(
-            path:     'about',
-            title:    'About',
-            metaDesc: 'A short description.',
-            status:   PageStatus::Published,
-            sections: [new ArticleSection('Hello World')],
+            path:       'about',
+            title:      'About',
+            metaDesc:   'A short description.',
+            status:     PageStatus::Published,
+            sections:   [new ArticleSection('Hello World')],
+            searchable: true,
         );
         $page = $repo->getById($id);
 
@@ -63,6 +65,7 @@ final class PageRepositoryIntegrationTest extends TestCase {
         $this->assertCount(1,                       $page->sections);
         $this->assertInstanceOf(ArticleSection::class, $page->sections[0]);
         $this->assertSame('Hello World', $page->sections[0]->content);
+        $this->assertTrue($page->searchable);
     }
 
     function testInsertOnDuplicatePathThrowsDomainException (): void {
@@ -70,11 +73,12 @@ final class PageRepositoryIntegrationTest extends TestCase {
         $repo->create('about', 'About');
         $this->expectException(DuplicatePathException::class);
         $repo->insert(
-            path:     'about',
-            title:    'About (copy)',
-            metaDesc: null,
-            status:   PageStatus::Draft,
-            sections: [],
+            path:       'about',
+            title:      'About (copy)',
+            metaDesc:   null,
+            status:     PageStatus::Draft,
+            sections:   [],
+            searchable: true,
         );
     }
 
@@ -155,6 +159,59 @@ final class PageRepositoryIntegrationTest extends TestCase {
         $this->assertFalse(Container::get(PageRepository::class)->delete(9999));
     }
 
+    function testSearchPublishedMatchesWordAnywhereInSearchText (): void {
+        $repo = Container::get(PageRepository::class);
+        $repo->insert('about', 'About', null, PageStatus::Published, [new ArticleSection('A modern art gallery.')], true);
+
+        $results = $repo->searchPublished('gallery');
+
+        $this->assertCount(1, $results);
+        $this->assertSame('about', $results[0]['path']);
+    }
+
+    function testSearchPublishedRequiresEveryWordToMatch (): void {
+        $repo = Container::get(PageRepository::class);
+        $repo->insert('about', 'About', null, PageStatus::Published, [new ArticleSection('A modern art gallery.')], true);
+
+        $this->assertCount(1, $repo->searchPublished('modern gallery'));
+        $this->assertCount(0, $repo->searchPublished('modern missing'));
+    }
+
+    function testSearchPublishedIsCaseInsensitive (): void {
+        $repo = Container::get(PageRepository::class);
+        $repo->insert('about', 'About', null, PageStatus::Published, [new ArticleSection('A Modern Gallery.')], true);
+
+        $this->assertCount(1, $repo->searchPublished('modern'));
+    }
+
+    function testSearchPublishedExcludesNonSearchablePages (): void {
+        $repo = Container::get(PageRepository::class);
+        $repo->insert('about', 'About', null, PageStatus::Published, [new ArticleSection('modern gallery')], false);
+
+        $this->assertSame([], $repo->searchPublished('gallery'));
+    }
+
+    function testSearchPublishedExcludesDraftPages (): void {
+        $repo = Container::get(PageRepository::class);
+        $repo->insert('about', 'About', null, PageStatus::Draft, [new ArticleSection('modern gallery')], true);
+
+        $this->assertSame([], $repo->searchPublished('gallery'));
+    }
+
+    function testSearchPublishedExcludesRowsWithNoSearchTextYet (): void {
+        // Simulates a page saved before M012PagesSearch existed — the
+        // column defaults to NULL there, not an empty string.
+        $repo = Container::get(PageRepository::class);
+        $id   = $repo->insert('about', 'About', null, PageStatus::Published, [new ArticleSection('modern gallery')], true);
+        Container::get(Database::class)->execute('UPDATE pages SET search_text = NULL WHERE id = :id', [':id' => $id]);
+
+        $this->assertSame([], $repo->searchPublished('gallery'));
+    }
+
+    function testSearchPublishedReturnsEmptyForBlankQuery (): void {
+        $this->assertSame([], Container::get(PageRepository::class)->searchPublished('   '));
+    }
+
     protected function setUp (): void {
         parent::setUp();
         Container::set(PDO::class, self::makeDb());
@@ -168,14 +225,16 @@ final class PageRepositoryIntegrationTest extends TestCase {
         ]);
         $pdo->exec(<<<'SQL'
             CREATE TABLE pages (
-                id         INTEGER PRIMARY KEY AUTOINCREMENT,
-                path       TEXT NOT NULL UNIQUE,
-                title      TEXT NOT NULL,
-                meta_desc  TEXT NULL,
-                status     TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published')),
-                content    TEXT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                path        TEXT NOT NULL UNIQUE,
+                title       TEXT NOT NULL,
+                meta_desc   TEXT NULL,
+                status      TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'published')),
+                content     TEXT NULL,
+                searchable  INTEGER NOT NULL DEFAULT 1,
+                search_text TEXT NULL,
+                created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         SQL);
         return $pdo;

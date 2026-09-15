@@ -60,12 +60,13 @@ final readonly class PageService {
             return false;
 
         $this->repo->save(new Page(
-            id:       $existing->id,
-            path:     $existing->path,
-            title:    $req->title,
-            metaDesc: $req->metaDesc,
-            status:   $req->status,
-            sections: $req->sections,
+            id:         $existing->id,
+            path:       $existing->path,
+            title:      $req->title,
+            metaDesc:   $req->metaDesc,
+            status:     $req->status,
+            sections:   $req->sections,
+            searchable: $req->searchable,
         ));
         return true;
     }
@@ -82,11 +83,12 @@ final readonly class PageService {
             return null;
 
         return $this->repo->insert(
-            path:     $target->path,
-            title:    $target->title,
-            metaDesc: $source->metaDesc,
-            status:   PageStatus::Draft,
-            sections: $source->sections,
+            path:       $target->path,
+            title:      $target->title,
+            metaDesc:   $source->metaDesc,
+            status:     PageStatus::Draft,
+            sections:   $source->sections,
+            searchable: $source->searchable,
         );
     }
 

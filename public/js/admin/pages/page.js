@@ -24,15 +24,17 @@ export default class Page {
      * @param {string|null} metaDesc
      * @param {string}      status
      * @param {Section[]}   sections
+     * @param {boolean}     searchable
      */
-    constructor (id, path, title, metaDesc, status, sections) {
+    constructor (id, path, title, metaDesc, status, sections, searchable) {
         this.id       = id
         this.path     = path
         this.title    = title
         this.metaDesc = metaDesc
         // TODO: Can we enforce the status enum statically?
-        this.status   = status
-        this.sections = sections
+        this.status     = status
+        this.sections   = sections
+        this.searchable = searchable
     }
 
     /**
@@ -41,10 +43,11 @@ export default class Page {
      */
     static async fromObject (input, sectionFactory) {
         if (!isObject(input)
-            || typeof input.id     !== 'number'
-            || typeof input.path   !== 'string'
-            || typeof input.title  !== 'string'
-            || typeof input.status !== 'string'
+            || typeof input.id         !== 'number'
+            || typeof input.path       !== 'string'
+            || typeof input.title      !== 'string'
+            || typeof input.status     !== 'string'
+            || typeof input.searchable !== 'boolean'
             || !(input.metaDesc === null || typeof input.metaDesc === 'string')
             || !Array.isArray(input.sections))
             throw new Error('Invalid Page shape')
@@ -53,7 +56,7 @@ export default class Page {
             input.sections.map(row => sectionFactory.create(row))
         )
 
-        return new Page(input.id, input.path, input.title, input.metaDesc, input.status, sections)
+        return new Page(input.id, input.path, input.title, input.metaDesc, input.status, sections, input.searchable)
     }
 
 }

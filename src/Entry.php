@@ -9,7 +9,9 @@ use TheSaiged\Controllers\AdminsController;
 use TheSaiged\Controllers\AuthController;
 use TheSaiged\Controllers\MediaController;
 use TheSaiged\Controllers\PublicController;
+use TheSaiged\Controllers\SearchController;
 use TheSaiged\Controllers\ShellController;
+use TheSaiged\Controllers\SuggestionsController;
 use TheSaiged\Core\Singleton;
 use TheSaiged\Core\Http\Request;
 use TheSaiged\Core\Http\Route;
@@ -50,6 +52,10 @@ final class Entry {
             Route::post   ('/auth/logout',                     AuthController   ::handler('logout')),
             Route::get    ('/api/admin/me',                    AuthController   ::handler('me')),
 
+            # Public search — no auth, visitors call these directly.
+            Route::get    ('/api/search',                      SearchController      ::handler('search')),
+            Route::get    ('/api/search/suggestions',          SuggestionsController ::handler('get')),
+
             # Admin accounts — Admin role only, re-checked from the DB on
             # every request (see AdminGuard::admin).
             Route::get    ('/api/admin/admins',                AdminGuard::admin(AdminsController::handler('list'))),
@@ -71,6 +77,7 @@ final class Entry {
             Route::post   ('/api/admin/uploads/{id}/variants', AdminGuard::any(MediaController  ::handler('ensureVariant'))),
             Route::get    ('/api/admin/shell/{type}',          AdminGuard::any(ShellController  ::handler('get'))),
             Route::put    ('/api/admin/shell/{type}',          AdminGuard::any(ShellController  ::handler('put'))),
+            Route::put    ('/api/admin/search/suggestions',    AdminGuard::any(SuggestionsController::handler('put'))),
             Route::any    ('/api/*',                           AdminController  ::handler('notFound')),
             Route::any    ('/*',                               PublicController ::handler('page')),
         ];

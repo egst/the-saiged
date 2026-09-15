@@ -18,8 +18,8 @@ import PageTree from '/js/admin/sidebar/page-tree.js'
  *   [ page tree (dirs + page leaves) ]
  *
  * The top "static" section holds admin views that aren't backed by the
- * dynamic Pages list — Uploads, Header, Footer, and (Admin role only)
- * Users.
+ * dynamic Pages list — Uploads, Header, Footer, Search, and (Admin role
+ * only) Users.
  * They look like tree leaves visually (same paddings + hover + active
  * styling) but without the indicator dot, since they're not Pages.
  *
@@ -66,6 +66,7 @@ export default class Sidebar {
             this.#staticLink('/admin/uploads',     'Uploads'),
             this.#staticLink('/admin/site/header', 'Header'),
             this.#staticLink('/admin/site/footer', 'Footer'),
+            this.#staticLink('/admin/site/search', 'Search'),
         )
         if (role === 'admin')
             staticSection.append(this.#staticLink('/admin/site/users', 'Users'))

@@ -82,7 +82,7 @@ final class PageServiceTest extends TestCase {
 
         $result = Container::get(PageService::class)->update(
             new PageId(99),
-            new PageUpdate('X', null, PageStatus::Draft, []),
+            new PageUpdate('X', null, PageStatus::Draft, [], true),
         );
 
         $this->assertFalse($result);
@@ -95,16 +95,17 @@ final class PageServiceTest extends TestCase {
             $repo->expects($this->once())
                 ->method('save')
                 ->with($this->callback(fn (Page $page) =>
-                    $page->id       === 7
-                    && $page->path  === 'about'
-                    && $page->title === 'About (new)'
-                    && $page->status === PageStatus::Published
+                    $page->id           === 7
+                    && $page->path      === 'about'
+                    && $page->title     === 'About (new)'
+                    && $page->status    === PageStatus::Published
+                    && $page->searchable === false
                 ));
         });
 
         $result = Container::get(PageService::class)->update(
             new PageId(7),
-            new PageUpdate('About (new)', null, PageStatus::Published, [new ArticleSection('content')]),
+            new PageUpdate('About (new)', null, PageStatus::Published, [new ArticleSection('content')], false),
         );
 
         $this->assertTrue($result);

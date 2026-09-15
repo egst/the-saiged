@@ -40,6 +40,7 @@ final readonly class Layout {
                 {$page->metaDescTag()}
                 <link rel="stylesheet" href="/css/public/main.css">
                 <link rel="stylesheet" href="/css/public/overlay.css">
+                <link rel="stylesheet" href="/css/public/search.css">
                 $shellAssets
                 {$page->assetTags()}
             </head>

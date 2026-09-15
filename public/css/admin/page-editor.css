@@ -181,3 +181,19 @@
     color: var(--muted);
     cursor: not-allowed;
 }
+
+/*
+ * Checkbox + trailing text, side by side — #content label's default
+ * (text on top, input below, flex-direction: column) is meant for
+ * text/textarea fields and would stack a checkbox above its own label
+ * text, which reads oddly for a single inline toggle.
+ */
+.page-searchable {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-small);
+}
+
+.page-searchable input {
+    width: auto;
+}

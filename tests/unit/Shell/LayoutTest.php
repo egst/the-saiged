@@ -48,6 +48,7 @@ final class LayoutTest extends TestCase {
         $this->assertStringContainsString('<title>My Title</title>',  $html);
         $this->assertStringContainsString('/css/public/main.css',     $html);
         $this->assertStringContainsString('/css/public/overlay.css',  $html);
+        $this->assertStringContainsString('/css/public/search.css',   $html);
         $this->assertStringContainsString('/js/main.js',              $html);
     }
 

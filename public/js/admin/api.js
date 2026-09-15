@@ -248,6 +248,35 @@ export default class Api extends EventTarget {
     }
 
     /**
+     * The "naseptávač" list — placeholder strings the public search
+     * input cycles through while empty.
+     *
+     * @returns {Promise<string[]>}
+     */
+    async getSuggestions () {
+        const response = await fetch('/api/search/suggestions')
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to load search suggestions'))
+
+        const data = await response.json()
+        if (!isObject(data) || !Array.isArray(data.suggestions))
+            throw new Error('getSuggestions: invalid response shape')
+
+        return data.suggestions
+    }
+
+    /** @param {string[]} suggestions */
+    async putSuggestions (suggestions) {
+        const response = await fetch('/api/admin/search/suggestions', {
+            method:  'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body:    JSON.stringify({suggestions}),
+        })
+        if (!response.ok)
+            throw new Error(await this.#errorMessage(response, 'Failed to save search suggestions'))
+    }
+
+    /**
      * Who (if anyone) is currently logged in. A 401 is the ordinary
      * "not logged in" case, not a failure — resolves to null instead of
      * throwing, so callers don't need a try/catch just to show a login

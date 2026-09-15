@@ -5,6 +5,7 @@ namespace TheSaiged\Pages;
 use PDOException;
 use RuntimeException;
 use TheSaiged\Core\Database\Database;
+use TheSaiged\Search\SearchTextExtractor;
 use TheSaiged\Sections\Section;
 
 /**
@@ -59,8 +60,12 @@ final readonly class PageRepository {
     function create (string $path, string $title): int {
         try {
             $this->db->execute(
-                'INSERT INTO pages (path, title) VALUES (:path, :title)',
-                [':path' => $path, ':title' => $title],
+                'INSERT INTO pages (path, title, search_text) VALUES (:path, :title, :search_text)',
+                [
+                    ':path'        => $path,
+                    ':title'       => $title,
+                    ':search_text' => SearchTextExtractor::extract($title, null, []),
+                ],
             );
         } catch (PDOException $pdoException) {
             self::rethrowDuplicatePath($pdoException, $path);
@@ -82,18 +87,21 @@ final readonly class PageRepository {
         ?string    $metaDesc,
         PageStatus $status,
         array      $sections,
+        bool       $searchable,
     ): int {
         $content = self::encodeSections($sections);
         try {
             $this->db->execute(
-                'INSERT INTO pages (path, title, meta_desc, status, content)
-                 VALUES (:path, :title, :meta_desc, :status, :content)',
+                'INSERT INTO pages (path, title, meta_desc, status, content, searchable, search_text)
+                 VALUES (:path, :title, :meta_desc, :status, :content, :searchable, :search_text)',
                 [
-                    ':path'      => $path,
-                    ':title'     => $title,
-                    ':meta_desc' => $metaDesc,
-                    ':status'    => $status->value,
-                    ':content'   => $content,
+                    ':path'        => $path,
+                    ':title'       => $title,
+                    ':meta_desc'   => $metaDesc,
+                    ':status'      => $status->value,
+                    ':content'     => $content,
+                    ':searchable'  => $searchable,
+                    ':search_text' => SearchTextExtractor::extract($title, $metaDesc, $sections),
                 ],
             );
         } catch (PDOException $pdoException) {
@@ -111,24 +119,72 @@ final readonly class PageRepository {
     }
 
     function save (Page $page): void {
-        $content  = self::encodeSections($page->sections);
+        $content = self::encodeSections($page->sections);
+        $searchText = SearchTextExtractor::extract($page->title, $page->metaDesc, $page->sections);
         $affected = $this->db->execute(
             'UPDATE pages
-                SET title     = :title,
-                    meta_desc = :meta_desc,
-                    status    = :status,
-                    content   = :content
+                SET title       = :title,
+                    meta_desc   = :meta_desc,
+                    status      = :status,
+                    content     = :content,
+                    searchable  = :searchable,
+                    search_text = :search_text
               WHERE id = :id',
             [
-                ':title'     => $page->title,
-                ':meta_desc' => $page->metaDesc,
-                ':status'    => $page->status->value,
-                ':content'   => $content,
-                ':id'        => $page->id,
+                ':title'       => $page->title,
+                ':meta_desc'   => $page->metaDesc,
+                ':status'      => $page->status->value,
+                ':content'     => $content,
+                ':searchable'  => $page->searchable,
+                ':search_text' => $searchText,
+                ':id'          => $page->id,
             ],
         );
         if ($affected === 0)
             throw new RuntimeException("Page #{$page->id} not found for update");
+    }
+
+    /**
+     * Every whitespace-separated word in $query must appear somewhere in
+     * search_text (case-insensitive, not necessarily adjacent/in order) —
+     * only among searchable, published pages. Rows whose search_text is
+     * still NULL (never saved since M012PagesSearch — see
+     * scripts/reindex-search.php) can't match a LIKE, so they're silently
+     * excluded rather than needing special-casing here.
+     *
+     * @return list<array{path: string, title: string, searchText: string}>
+     */
+    function searchPublished (string $query): array {
+        $split = preg_split('/\s+/', trim($query));
+        $words = array_values(array_filter(
+            $split !== false ? $split : [],
+            fn (string $word): bool => $word !== '',
+        ));
+        if ($words === [])
+            return [];
+
+        $conditions = [];
+        $params     = [':status' => PageStatus::Published->value];
+        foreach ($words as $index => $word) {
+            $conditions[]          = "search_text LIKE :word$index";
+            $params[":word$index"] = '%' . $word . '%';
+        }
+
+        $rows = $this->db->fetchAll(
+            'SELECT path, title, search_text FROM pages
+              WHERE searchable = 1 AND status = :status AND ' . implode(' AND ', $conditions),
+            $params,
+        );
+
+        $results = [];
+        foreach ($rows as $row) {
+            $path       = $row['path']        ?? null;
+            $title      = $row['title']       ?? null;
+            $searchText = $row['search_text'] ?? null;
+            if (is_string($path) && is_string($title) && is_string($searchText))
+                $results[] = ['path' => $path, 'title' => $title, 'searchText' => $searchText];
+        }
+        return $results;
     }
 
     /**

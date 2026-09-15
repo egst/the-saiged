@@ -234,7 +234,18 @@ export default class PageEditor {
         })
         descLabel.append(descInput)
 
-        body.append(titleLabel, descLabel)
+        const searchableLabel = document.createElement('label')
+        searchableLabel.className = 'page-searchable'
+        const searchableInput = document.createElement('input')
+        searchableInput.type    = 'checkbox'
+        searchableInput.name    = 'searchable'
+        searchableInput.checked = this.#page.searchable
+        searchableInput.addEventListener('change', () => {
+            this.#page.searchable = searchableInput.checked
+        })
+        searchableLabel.append(searchableInput, ' Show this page in site search results')
+
+        body.append(titleLabel, descLabel, searchableLabel)
         panel.append(body)
         return panel
     }
@@ -488,10 +499,11 @@ export default class PageEditor {
      */
     #serialize () {
         return JSON.stringify({
-            title:    this.#page.title,
-            metaDesc: this.#page.metaDesc,
-            status:   this.#page.status,
-            sections: this.#page.sections.map(section => ({
+            title:      this.#page.title,
+            metaDesc:   this.#page.metaDesc,
+            status:     this.#page.status,
+            searchable: this.#page.searchable,
+            sections:   this.#page.sections.map(section => ({
                 type: /** @type {typeof import('/js/admin/sections/section.js').default} */ (section.constructor).type(),
                 data: section.toObject(),
             })),

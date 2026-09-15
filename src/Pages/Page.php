@@ -15,6 +15,12 @@ use TheSaiged\Sections\SectionFactory;
  *
  * metaDesc stays nullable because it's a legitimately optional content
  * field — the user can leave it blank.
+ *
+ * searchable defaults to true and sits last with a default value
+ * (rather than in field order next to status, where it conceptually
+ * belongs) purely to avoid updating every positional `new Page(...)`
+ * call across the codebase — it's genuinely optional, unlike the fields
+ * before it.
  */
 final readonly class Page {
 
@@ -26,32 +32,37 @@ final readonly class Page {
         public ?string    $metaDesc,
         public PageStatus $status,
         public array      $sections,
+        public bool       $searchable = true,
     ) {}
 
     /** @param array<string, mixed> $row */
     static function fromDbRow (array $row): self {
-        $id       = $row['id']        ?? null;
-        $path     = $row['path']      ?? null;
-        $title    = $row['title']     ?? null;
-        $metaDesc = $row['meta_desc'] ?? null;
-        $status   = $row['status']    ?? null;
-        $content  = $row['content']   ?? null;
+        $id         = $row['id']         ?? null;
+        $path       = $row['path']       ?? null;
+        $title      = $row['title']      ?? null;
+        $metaDesc   = $row['meta_desc']  ?? null;
+        $status     = $row['status']     ?? null;
+        $content    = $row['content']    ?? null;
+        $searchable = $row['searchable'] ?? true;
 
         if (!is_int($id) || !is_string($path) || !is_string($title) || !is_string($status))
             throw new InvalidDataException('page row');
         if ($metaDesc !== null && !is_string($metaDesc))
             throw new InvalidDataException('page row', 'meta_desc must be string or null');
+        if (!is_bool($searchable) && !is_int($searchable))
+            throw new InvalidDataException('page row', 'searchable must be boolean');
 
         $statusEnum = PageStatus::tryFrom($status)
             ?? throw new InvalidDataException('page row', "unknown status: $status");
 
         return new self(
-            id:       $id,
-            path:     $path,
-            title:    $title,
-            metaDesc: $metaDesc,
-            status:   $statusEnum,
-            sections: self::decodeSections($content),
+            id:         $id,
+            path:       $path,
+            title:      $title,
+            metaDesc:   $metaDesc,
+            status:     $statusEnum,
+            sections:   self::decodeSections($content),
+            searchable: (bool) $searchable,
         );
     }
 
@@ -65,12 +76,13 @@ final readonly class Page {
      */
     function toArray (): array {
         return [
-            'id'       => $this->id,
-            'path'     => $this->path,
-            'title'    => $this->title,
-            'metaDesc' => $this->metaDesc,
-            'status'   => $this->status->value,
-            'sections' => array_map(SectionFactory::toArray(...), $this->sections),
+            'id'         => $this->id,
+            'path'       => $this->path,
+            'title'      => $this->title,
+            'metaDesc'   => $this->metaDesc,
+            'status'     => $this->status->value,
+            'sections'   => array_map(SectionFactory::toArray(...), $this->sections),
+            'searchable' => $this->searchable,
         ];
     }
 

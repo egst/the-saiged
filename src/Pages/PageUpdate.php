@@ -23,6 +23,7 @@ final readonly class PageUpdate {
         public ?string    $metaDesc,
         public PageStatus $status,
         public array      $sections,
+        public bool       $searchable,
     ) {}
 
     /**
@@ -58,7 +59,11 @@ final readonly class PageUpdate {
             $sections[] = SectionFactory::fromArray($sectionData);
         }
 
-        return new self($title, $metaDesc, $status, $sections);
+        $searchable = $body['searchable'] ?? null;
+        if (!is_bool($searchable))
+            throw new InvalidDataException('PageUpdate', 'searchable must be a boolean');
+
+        return new self($title, $metaDesc, $status, $sections, $searchable);
     }
 
 }

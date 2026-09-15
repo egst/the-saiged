@@ -34,6 +34,7 @@
         "test":      "phpunit --testdox",
         "test:unit": "phpunit --testdox --testsuite=Unit",
         "check":     ["@stan", "@test"],
-        "migrate":   "php scripts/migrate.php"
+        "migrate":   "php scripts/migrate.php",
+        "reindex-search": "php scripts/reindex-search.php"
     }
 }
