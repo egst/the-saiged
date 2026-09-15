@@ -32,6 +32,7 @@ final readonly class Layout {
 
         $shellAssets = $this->shellAssetTags($header) . "\n    " . $this->shellAssetTags($footer);
         $analytics   = $this->analyticsTag();
+        $bodyClass   = $page->hasFullPageHero() ? ' class="header-overlay"' : '';
 
         return <<<HTML
             <!DOCTYPE html>
@@ -48,7 +49,7 @@ final readonly class Layout {
                 {$page->assetTags()}
                 $analytics
             </head>
-            <body>
+            <body$bodyClass>
                 {$header->render()}
                 {$page->bodyHtml()}
                 {$footer->render()}

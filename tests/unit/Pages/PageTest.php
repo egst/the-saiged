@@ -7,6 +7,7 @@ use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Pages\Page;
 use TheSaiged\Pages\PageStatus;
 use TheSaiged\Sections\Article\ArticleSection;
+use TheSaiged\Sections\PageCover\PageCoverSection;
 use TheSaiged\Tests\TestCase;
 
 final class PageTest extends TestCase {
@@ -165,6 +166,36 @@ final class PageTest extends TestCase {
         $this->assertStringContainsString('Hello World', $partial['html']);
         $this->assertStringNotContainsString('<!DOCTYPE html>', $partial['html']);
         $this->assertSame(['/sections/Article/style.css'], $partial['cssLinks']);
+    }
+
+    function testHasFullPageHeroFalseWhenNoSections (): void {
+        $page = new Page(1, 'p', 't', null, PageStatus::Draft, []);
+
+        $this->assertFalse($page->hasFullPageHero());
+    }
+
+    function testHasFullPageHeroFalseWhenFirstSectionIsNotFullPageImage (): void {
+        $page = new Page(1, 'p', 't', null, PageStatus::Draft, [new ArticleSection('x')]);
+
+        $this->assertFalse($page->hasFullPageHero());
+    }
+
+    function testHasFullPageHeroTrueWhenFirstSectionIsFullPageImage (): void {
+        $page = new Page(1, 'p', 't', null, PageStatus::Draft, [
+            new PageCoverSection(uploadId: 1, eyebrow: 'e', heading: 'h'),
+            new ArticleSection('x'),
+        ]);
+
+        $this->assertTrue($page->hasFullPageHero());
+    }
+
+    function testHasFullPageHeroOnlyChecksTheFirstSection (): void {
+        $page = new Page(1, 'p', 't', null, PageStatus::Draft, [
+            new ArticleSection('x'),
+            new PageCoverSection(uploadId: 1, eyebrow: 'e', heading: 'h'),
+        ]);
+
+        $this->assertFalse($page->hasFullPageHero());
     }
 
     function testPartialDeduplicatesCssLinksAcrossRepeatedSections (): void {

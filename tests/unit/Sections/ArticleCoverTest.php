@@ -5,12 +5,17 @@ namespace TheSaiged\Tests\Unit\Sections;
 use PHPUnit\Framework\Attributes\TestWith;
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\ArticleCover\ArticleCoverSection;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Tests\TestCase;
 
 final class ArticleCoverTest extends TestCase {
 
     function testTypeReturnsArticleCover (): void {
         $this->assertSame('article-cover', ArticleCoverSection::type());
+    }
+
+    function testImplementsFullPageImageSection (): void {
+        $this->assertInstanceOf(FullPageImageSection::class, new ArticleCoverSection(1, 'e', 'h', 'b'));
     }
 
     function testFromArrayHappyPath (): void {

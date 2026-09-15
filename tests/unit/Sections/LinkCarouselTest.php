@@ -4,6 +4,7 @@ namespace TheSaiged\Tests\Unit\Sections;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\LinkCarousel\LinkCarouselItem;
 use TheSaiged\Sections\LinkCarousel\LinkCarouselSection;
 use TheSaiged\Tests\TestCase;
@@ -12,6 +13,10 @@ final class LinkCarouselTest extends TestCase {
 
     function testTypeReturnsLinkCarousel (): void {
         $this->assertSame('link-carousel', LinkCarouselSection::type());
+    }
+
+    function testImplementsFullPageImageSection (): void {
+        $this->assertInstanceOf(FullPageImageSection::class, new LinkCarouselSection([]));
     }
 
     function testFromArrayHappyPath (): void {

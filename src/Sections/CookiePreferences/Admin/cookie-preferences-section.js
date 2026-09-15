@@ -32,7 +32,7 @@ export default class CookiePreferencesSection extends Section {
     /** @returns {HTMLDivElement} */
     static preview () {
         const root = document.createElement('div')
-        root.className = 'sp-preview'
+        root.className = 'sp-preview sp-preview--light'
         /** @param {number} w */
         const bar = w => {
             const el = document.createElement('div')

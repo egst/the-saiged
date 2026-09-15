@@ -3,6 +3,7 @@
 namespace TheSaiged\Sections\ImageBreak;
 
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\Section;
 use TheSaiged\Uploads\Upload;
 
@@ -12,7 +13,7 @@ use TheSaiged\Uploads\Upload;
  * pre-generates the variant via ensureVariant when picking the image,
  * so no Imagick runs at render time.
  */
-final readonly class ImageBreakSection implements Section {
+final readonly class ImageBreakSection implements Section, FullPageImageSection {
 
     private const VARIANT_WIDTH  = 1920;
     private const VARIANT_HEIGHT = 1080;

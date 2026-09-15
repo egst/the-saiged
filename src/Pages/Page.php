@@ -4,6 +4,7 @@ namespace TheSaiged\Pages;
 
 use ReflectionClass;
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\Section;
 use TheSaiged\Sections\SectionFactory;
 
@@ -116,6 +117,17 @@ final readonly class Page {
                 $tags[] = "<script type=\"module\" src=\"/sections/$folder/$file\"></script>";
         }
         return implode("\n    ", $tags);
+    }
+
+    /**
+     * Whether the header should overlay this page (transparent, fixed) vs
+     * sit inline above it (solid, sticky, taking up its own space) — true
+     * only when the page opens on a section dark enough for the header's
+     * white-text overlay state to read against, see FullPageImageSection.
+     * Public for Layout.
+     */
+    function hasFullPageHero (): bool {
+        return ($this->sections[0] ?? null) instanceof FullPageImageSection;
     }
 
     /** Concatenated section markup, in section order. Public for Layout. */

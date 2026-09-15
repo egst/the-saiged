@@ -3,6 +3,7 @@
 namespace TheSaiged\Sections\LinkCarousel;
 
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\Section;
 use TheSaiged\Uploads\Upload;
 
@@ -17,7 +18,7 @@ use TheSaiged\Uploads\Upload;
  * the admin pre-generates them via ensureVariant so no Imagick runs at
  * render time.
  */
-final readonly class LinkCarouselSection implements Section {
+final readonly class LinkCarouselSection implements Section, FullPageImageSection {
 
     private const VARIANT_WIDTH  = 1920;
     private const VARIANT_HEIGHT = 1080;

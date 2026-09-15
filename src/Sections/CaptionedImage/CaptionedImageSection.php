@@ -3,10 +3,11 @@
 namespace TheSaiged\Sections\CaptionedImage;
 
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\Section;
 use TheSaiged\Uploads\Upload;
 
-final readonly class CaptionedImageSection implements Section {
+final readonly class CaptionedImageSection implements Section, FullPageImageSection {
 
     private const VARIANT_WIDTH  = 1920;
     private const VARIANT_HEIGHT = 1280;

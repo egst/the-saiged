@@ -3,6 +3,7 @@
 namespace TheSaiged\Sections\PageCover;
 
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\Section;
 use TheSaiged\Uploads\Upload;
 
@@ -10,7 +11,7 @@ use TheSaiged\Uploads\Upload;
  * Full-viewport hero section with a background image, eyebrow text, and
  * a large serif heading. Background rendered via a predictable variant URL.
  */
-final readonly class PageCoverSection implements Section {
+final readonly class PageCoverSection implements Section, FullPageImageSection {
 
     private const VARIANT_WIDTH  = 1920;
     private const VARIANT_HEIGHT = 1080;

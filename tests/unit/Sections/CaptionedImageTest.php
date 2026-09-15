@@ -5,12 +5,17 @@ namespace TheSaiged\Tests\Unit\Sections;
 use PHPUnit\Framework\Attributes\TestWith;
 use TheSaiged\Core\InvalidDataException;
 use TheSaiged\Sections\CaptionedImage\CaptionedImageSection;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Tests\TestCase;
 
 final class CaptionedImageTest extends TestCase {
 
     function testTypeReturnsCaptionedImage (): void {
         $this->assertSame('captioned-image', CaptionedImageSection::type());
+    }
+
+    function testImplementsFullPageImageSection (): void {
+        $this->assertInstanceOf(FullPageImageSection::class, new CaptionedImageSection(1, 'c'));
     }
 
     function testFromArrayHappyPath (): void {

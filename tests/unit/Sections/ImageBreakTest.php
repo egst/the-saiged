@@ -4,6 +4,7 @@ namespace TheSaiged\Tests\Unit\Sections;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\ImageBreak\ImageBreakSection;
 use TheSaiged\Tests\TestCase;
 
@@ -11,6 +12,10 @@ final class ImageBreakTest extends TestCase {
 
     function testTypeReturnsImageBreak (): void {
         $this->assertSame('image-break', ImageBreakSection::type());
+    }
+
+    function testImplementsFullPageImageSection (): void {
+        $this->assertInstanceOf(FullPageImageSection::class, new ImageBreakSection(1, 'c'));
     }
 
     function testFromArrayHappyPath (): void {

@@ -4,6 +4,7 @@ namespace TheSaiged\Tests\Unit\Sections;
 
 use PHPUnit\Framework\Attributes\TestWith;
 use TheSaiged\Core\InvalidDataException;
+use TheSaiged\Sections\FullPageImageSection;
 use TheSaiged\Sections\PageCover\PageCoverSection;
 use TheSaiged\Tests\TestCase;
 
@@ -11,6 +12,10 @@ final class PageCoverTest extends TestCase {
 
     function testTypeReturnsPageCover (): void {
         $this->assertSame('page-cover', PageCoverSection::type());
+    }
+
+    function testImplementsFullPageImageSection (): void {
+        $this->assertInstanceOf(FullPageImageSection::class, new PageCoverSection(1, 'e', 'h'));
     }
 
     function testFromArrayHappyPath (): void {

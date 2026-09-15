@@ -6,6 +6,7 @@ use TheSaiged\Core\Container;
 use TheSaiged\Pages\Page;
 use TheSaiged\Pages\PageStatus;
 use TheSaiged\Sections\Article\ArticleSection;
+use TheSaiged\Sections\PageCover\PageCoverSection;
 use TheSaiged\Shell\Footer\FooterShell;
 use TheSaiged\Shell\Header\HeaderLink;
 use TheSaiged\Shell\Header\HeaderShell;
@@ -96,6 +97,27 @@ final class LayoutTest extends TestCase {
         $this->assertStringContainsString('/sections/Article/style.css',        $html);
         $this->assertStringContainsString('name="description"',                 $html);
         $this->assertStringContainsString('A description.',                     $html);
+    }
+
+    function testRenderOmitsHeaderOverlayClassWhenFirstSectionIsNotFullPageImage (): void {
+        $this->mockShells(HeaderShell::default(), FooterShell::default());
+
+        $page = new Page(1, 'p', 't', null, PageStatus::Published, [new ArticleSection('x')]);
+        $html = Container::get(Layout::class)->render($page);
+
+        $this->assertStringContainsString('<body>', $html);
+        $this->assertStringNotContainsString('header-overlay', $html);
+    }
+
+    function testRenderAddsHeaderOverlayClassWhenFirstSectionIsFullPageImage (): void {
+        $this->mockShells(HeaderShell::default(), FooterShell::default());
+
+        $page = new Page(1, 'p', 't', null, PageStatus::Published, [
+            new PageCoverSection(uploadId: 1, eyebrow: 'e', heading: 'h'),
+        ]);
+        $html = Container::get(Layout::class)->render($page);
+
+        $this->assertStringContainsString('<body class="header-overlay">', $html);
     }
 
     private function mockShells (HeaderShell $header, FooterShell $footer): void {
