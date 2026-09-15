@@ -1,5 +1,6 @@
 import overlay from '/js/overlay.js'
 import search  from '/js/search.js'
+import '/js/cookie-banner.js'
 
 document.addEventListener('click', e => {
     const target = e.target instanceof Element ? e.target : null

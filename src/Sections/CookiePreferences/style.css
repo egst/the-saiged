@@ -1,0 +1,66 @@
+/*
+ * Cookie Preferences section — fixed info copy plus a status/action panel
+ * whose contents (cookie-preferences.js) sync to the visitor's stored
+ * choice. Tokens from global public stylesheet (css/public/main.css).
+ */
+.cookie-preferences {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(56px, 8vw, 120px) clamp(24px, 5vw, 32px);
+}
+
+.cookie-preferences-heading {
+    font-family: var(--serif);
+    font-size: clamp(28px, 3.2vw, 44px);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 0 0 clamp(24px, 3vw, 40px);
+}
+
+.cookie-preferences-subheading {
+    font-size: clamp(17px, 1.4vw, 20px);
+    font-weight: 700;
+    margin: 32px 0 8px;
+}
+
+.cookie-preferences-body p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 0 0 12px;
+}
+
+.cookie-preferences-status {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 32px 0 0;
+}
+
+.cookie-preferences-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.cookie-preferences-button {
+    min-width: 140px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    background: var(--black);
+    color: var(--white);
+    font-size: 14px;
+    transition: opacity 160ms ease;
+}
+
+.cookie-preferences-button:hover,
+.cookie-preferences-button:focus-visible {
+    opacity: 0.8;
+    outline: none;
+}
+
+.cookie-preferences-button--secondary {
+    background: transparent;
+    color: var(--black);
+    border: 1px solid var(--black);
+}

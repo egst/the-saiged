@@ -2,6 +2,7 @@
 
 namespace TheSaiged\Shell;
 
+use TheSaiged\Core\Env;
 use TheSaiged\Pages\Page;
 use TheSaiged\Shell\Footer\FooterShell;
 use TheSaiged\Shell\Header\HeaderShell;
@@ -30,6 +31,7 @@ final readonly class Layout {
         $title = htmlspecialchars($page->title, ENT_QUOTES);
 
         $shellAssets = $this->shellAssetTags($header) . "\n    " . $this->shellAssetTags($footer);
+        $analytics   = $this->analyticsTag();
 
         return <<<HTML
             <!DOCTYPE html>
@@ -41,8 +43,10 @@ final readonly class Layout {
                 <link rel="stylesheet" href="/css/public/main.css">
                 <link rel="stylesheet" href="/css/public/overlay.css">
                 <link rel="stylesheet" href="/css/public/search.css">
+                <link rel="stylesheet" href="/css/public/cookie-banner.css">
                 $shellAssets
                 {$page->assetTags()}
+                $analytics
             </head>
             <body>
                 {$header->render()}
@@ -51,6 +55,39 @@ final readonly class Layout {
                 <script type="module" src="/js/main.js"></script>
             </body>
             </html>
+            HTML;
+    }
+
+    /**
+     * Google Analytics via Consent Mode: gtag.js and the config call always
+     * load, but with the default consent state read straight from the
+     * "cookie_consent" cookie (or denied, if it's not set yet) — this lets
+     * GA keep sending cookieless, aggregated pings even before/without
+     * consent, and only start setting its own cookies once the visitor
+     * accepts. cookie-consent.js (public/js) is the only other place that
+     * reads/writes this cookie — its name and values must stay in sync
+     * with what's checked here. Emits nothing when unconfigured, so local
+     * dev traffic never reaches real GA.
+     */
+    private function analyticsTag (): string {
+        $id = Env::optional('GA_MEASUREMENT_ID', '');
+        if ($id === '')
+            return '';
+
+        $id = htmlspecialchars($id, ENT_QUOTES);
+        return <<<HTML
+            <script>
+                window.dataLayer = window.dataLayer || [];
+                function gtag () { dataLayer.push(arguments); }
+                (function () {
+                    var match   = document.cookie.match(/(?:^|; )cookie_consent=([^;]*)/);
+                    var consent = match ? decodeURIComponent(match[1]) : null;
+                    gtag('consent', 'default', {analytics_storage: consent === 'accepted' ? 'granted' : 'denied'});
+                })();
+                gtag('js', new Date());
+                gtag('config', '$id');
+            </script>
+            <script async src="https://www.googletagmanager.com/gtag/js?id=$id"></script>
             HTML;
     }
 

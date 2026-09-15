@@ -49,7 +49,33 @@ final class LayoutTest extends TestCase {
         $this->assertStringContainsString('/css/public/main.css',     $html);
         $this->assertStringContainsString('/css/public/overlay.css',  $html);
         $this->assertStringContainsString('/css/public/search.css',   $html);
+        $this->assertStringContainsString('/css/public/cookie-banner.css', $html);
         $this->assertStringContainsString('/js/main.js',              $html);
+    }
+
+    function testRenderOmitsAnalyticsWhenMeasurementIdUnset (): void {
+        putenv('GA_MEASUREMENT_ID');
+        $this->mockShells(HeaderShell::default(), FooterShell::default());
+
+        $html = Container::get(Layout::class)->render(new Page(1, 'p', 't', null, PageStatus::Published, []));
+
+        $this->assertStringNotContainsString('googletagmanager.com', $html);
+    }
+
+    function testRenderIncludesAnalyticsWithConsentModeWhenMeasurementIdSet (): void {
+        putenv('GA_MEASUREMENT_ID=G-TEST123');
+        try {
+            $this->mockShells(HeaderShell::default(), FooterShell::default());
+
+            $html = Container::get(Layout::class)->render(new Page(1, 'p', 't', null, PageStatus::Published, []));
+
+            $this->assertStringContainsString('googletagmanager.com/gtag/js?id=G-TEST123', $html);
+            $this->assertStringContainsString("gtag('config', 'G-TEST123')",                $html);
+            $this->assertStringContainsString("gtag('consent', 'default'",                  $html);
+            $this->assertStringContainsString('cookie_consent',                             $html);
+        } finally {
+            putenv('GA_MEASUREMENT_ID');
+        }
     }
 
     function testRenderIncludesShellCssAssetTags (): void {
